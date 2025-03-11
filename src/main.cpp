@@ -5,6 +5,7 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include "constants.hpp"
+#include "assets.hpp"
 #include "state.hpp"
 #include "screen/main_menu.hpp"
 
@@ -30,7 +31,7 @@ bool init_sdl()
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize Mix_OpenAudio: %s", Mix_GetError());
         SDL_Quit();
-        return 1;
+        return false;
     }
     if (TTF_Init())
     {
@@ -73,8 +74,8 @@ int main(int argc, char *argv[])
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
     SDL_LogWarn(0, "This is a debug build and should not be used in production.");
 #endif
-    SDL_Window *window = SDL_CreateWindow(WINDOW_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_SHOWN);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL_Window *window = SDL_CreateWindow(WINDOW_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_HIDDEN);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_Surface *surface;
     SDL_Event event;
 
@@ -82,18 +83,22 @@ int main(int argc, char *argv[])
     {
         return 1;
     }
-    init_statics();
+    load_assets(renderer);
     SDL_SetWindowTitle(window, WINDOW_NAME);
-
     auto main_menu = MainMenu(renderer, window);
+    auto fps_hud = FPSHUD(renderer, window);
+    SDL_ShowWindow(window);
     while (true)
     {
         SDL_PollEvent(&event);
+        main_menu.handle_event(event);
         if (event.type == SDL_QUIT)
         {
-            return;
+            return 0;
         }
+        SDL_RenderClear(renderer);
         main_menu.render();
+        fps_hud.render();
         SDL_RenderPresent(renderer);
     }
 
