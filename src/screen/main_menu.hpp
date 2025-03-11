@@ -1,10 +1,11 @@
+#pragma once
+
 #include <functional>
-#include <string>
 #include <SDL.h>
 #include <SDL_image.h>
-#include <SDL_ttf.h>
-#include "../element/fps_hud.hpp"
+#include "game.hpp"
 #include "screen.hpp"
+#include "transition.hpp"
 #include <src/element/button.hpp>
 
 class MainMenu : public Screen
@@ -22,12 +23,14 @@ class MainMenu : public Screen
     SDL_Rect logo_rect;
     uint64_t last_tick;
     int last_frame;
-
+    Screen *game;
+    Screen *transition;
 public:
-    MainMenu(SDL_Renderer *renderer, SDL_Window *window)
+    MainMenu(SDL_Renderer *renderer, SDL_Window *window, Screen *game)
     {
         this->renderer = renderer;
         this->window = window;
+        this->game = game;
         bg_texture = IMG_LoadTexture(renderer, "assets/img/bg.jpeg");
         last_tick = SDL_GetTicks64();
         last_frame = 240;
@@ -47,6 +50,14 @@ public:
     void start_button_callback()
     {
         SDL_LogVerbose(0, "Start button clicked.");
+        src_screen = this;
+        dst_screen = game;
+        request_transition = true;
+        transition_to = State::GAME_STARTING;
+    }
+    void load_button_callback()
+    {
+        SDL_LogVerbose(0, "Load button clicked.");
     }
     void settings_button_callback()
     {
@@ -61,7 +72,6 @@ public:
     }
     void render()
     {
-        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
         SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
         SDL_RenderCopy(renderer, logo_texture, NULL, &logo_rect);
         (*start_button).render();

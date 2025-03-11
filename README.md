@@ -41,6 +41,7 @@ The output will be in `./bin`
 + JetBrains Mono: https://www.jetbrains.com/lp/mono/
 + FOT-Yuruka Std (for the logo)
 ### Assistances
++ StackOverflow
 + Perplexity (with Claude 3.7 Sonnet)
 
 ## License

@@ -7,7 +7,11 @@
 #include "constants.hpp"
 #include "assets.hpp"
 #include "state.hpp"
+#include "element/fps_hud.hpp"
 #include "screen/main_menu.hpp"
+#include "screen/game.hpp"
+#include "screen/intro.hpp"
+#include "screen/transition.hpp"
 
 /**
  * Initializes SDL2 and its subsystems.
@@ -78,17 +82,18 @@ int main(int argc, char *argv[])
     // then for all other platforms we prioritize Vulkan and finally fallback to SDL2's default
     SDL_LogVerbose(0, "Available render drivers:");
     int render_driver_index = -1;
-    for (int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
+    for (int i = 0; i < SDL_GetNumRenderDrivers(); i++)
+    {
         SDL_RendererInfo renderer_info = {};
         SDL_GetRenderDriverInfo(i, &renderer_info);
         SDL_LogVerbose(0, "Renderer %d: %s", i, renderer_info.name);
         auto render_name = std::string(renderer_info.name);
-        #ifdef _WIN32
+#ifdef _WIN32
         if (render_name.find("direct3d") != std::string::npos)
         {
             render_driver_index = i;
         }
-        #endif
+#endif
         if (render_name.find("vulkan") != std::string::npos && render_driver_index == -1)
         {
             render_driver_index = i;
@@ -97,7 +102,7 @@ int main(int argc, char *argv[])
     SDL_Window *window = SDL_CreateWindow(WINDOW_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_HIDDEN | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, render_driver_index, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_Surface *surface;
-    SDL_Event event; 
+    SDL_Event event;
 
     if (!init_sdl())
     {
@@ -105,20 +110,60 @@ int main(int argc, char *argv[])
     }
     load_assets(renderer);
     SDL_SetWindowTitle(window, WINDOW_NAME);
-    auto main_menu = new MainMenu(renderer, window);
+    auto game = new Game(renderer, window);
+    auto main_menu = new MainMenu(renderer, window, game);
+    auto intro = new Intro(renderer, window, main_menu);
     auto fps_hud = new FPSHUD(renderer, window);
+    Transition *transition = nullptr;
     SDL_ShowWindow(window);
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     while (true)
     {
         SDL_PollEvent(&event);
-        main_menu->handle_event(event);
         if (event.type == SDL_QUIT)
         {
             return 0;
         }
         SDL_RenderClear(renderer);
-        main_menu->render();
-        fps_hud->render();
+        if (request_transition)
+        {
+            SDL_LogVerbose(0, "Transitioning from %d to %d", (int)game_state, (int)transition_to);
+            if (transition == nullptr) {
+                transition = new Transition(renderer, window, src_screen, dst_screen, transition_duration);
+            }
+            transition->render();
+        }
+        else
+        {
+            switch (game_state)
+            {
+            case State::INTRO:
+                intro->render();
+                break;
+            case State::MAIN_MENU:
+                main_menu->handle_event(event);
+                main_menu->render();
+                break;
+            case State::GAME_STARTING:
+                game->handle_event(event);
+                game->render();
+                break;
+            case State::GAME:
+                break;
+            case State::GAME_OVER:
+                break;
+            case State::PAUSE:
+                break;
+            case State::SETTINGS:
+                break;
+            case State::SHOW_MESSAGEBOX:
+                break;
+            }
+        }
+        if (fps_hud_enabled)
+        {
+            fps_hud->render();
+        }
         SDL_RenderPresent(renderer);
     }
 

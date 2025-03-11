@@ -10,8 +10,12 @@
 SDL_Color WHITE_RGB = {255, 255, 255, 0};
 enum class State
 {
+    INTRO,
     MAIN_MENU,
     GAME,
+    GAME_STARTING,
     GAME_OVER,
-    PAUSE
+    PAUSE,
+    SETTINGS,
+    SHOW_MESSAGEBOX,
 };
