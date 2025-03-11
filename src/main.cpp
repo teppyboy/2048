@@ -82,12 +82,17 @@ int main(int argc, char *argv[])
     {
         return 1;
     }
-
+    init_statics();
     SDL_SetWindowTitle(window, WINDOW_NAME);
 
     auto main_menu = MainMenu(renderer, window);
     while (true)
     {
+        SDL_PollEvent(&event);
+        if (event.type == SDL_QUIT)
+        {
+            return;
+        }
         main_menu.render();
         SDL_RenderPresent(renderer);
     }
