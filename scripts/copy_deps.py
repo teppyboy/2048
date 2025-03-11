@@ -18,5 +18,5 @@ for dylib in build_path.glob("**/*.dylib"):
     shutil.copy(dylib, install_path / 'lib' / dylib.name)
 # Copy assets
 print(f"Copying assets to {install_path / 'assets'}")
-shutil.copytree(source_path / 'assets', install_path / 'assets')
+shutil.copytree(source_path / 'assets', install_path / 'assets', dirs_exist_ok=True)
 print("Done!")
