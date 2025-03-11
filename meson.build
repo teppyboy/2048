@@ -14,8 +14,12 @@ sdl2_image_dep = dependency('sdl2_image')
 sdl2_ttf_dep = dependency('sdl2_ttf')
 sdl2_mixer_dep = dependency('sdl2_mixer')
 
+win_subsystem = 'console'
+
 if get_option('buildtype').startswith('debug')
-  add_project_arguments('-DDEBUG', language : 'cpp')
+  add_project_arguments('-DDEBUG', language: 'cpp')
+else
+  win_subsystem = 'windows'
 endif
 
 exe = executable(
@@ -23,7 +27,7 @@ exe = executable(
   'src/main.cpp',
   install: true,
   install_dir: meson.current_source_dir() + '/bin',
-  # win_subsystem: 'windows',
+  win_subsystem: win_subsystem,
   dependencies: [sdl2_main_dep, sdl2_dep, sdl2_image_dep, sdl2_ttf_dep, sdl2_mixer_dep],
 )
 
