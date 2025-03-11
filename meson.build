@@ -1,5 +1,5 @@
 project(
-  'sdl2-template',
+  '2048',
   'cpp',
   version: '0.1',
   default_options: ['warning_level=3', 'cpp_std=c++20', 'default_library=static'],
@@ -17,7 +17,7 @@ if get_option('buildtype').startswith('debug')
 endif
 
 exe = executable(
-  'sdl2-template',
+  '2048',
   'src/main.cpp',
   install: true,
   # win_subsystem: 'windows',

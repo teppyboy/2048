@@ -8,7 +8,7 @@
 #define DEFAULT_WIDTH 1280
 #define DEFAULT_HEIGHT 720
 #define DEFAULT_FPS 60
-#define WINDOW_NAME "SDL2 Template"
+#define WINDOW_NAME "2048"
 
 /**
  * Initializes SDL2 and its subsystems.
@@ -18,7 +18,7 @@
 bool init_sdl()
 {
     SDL_LogVerbose(0, "Initializing SDL application '%s'...", WINDOW_NAME);
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
         return false;
