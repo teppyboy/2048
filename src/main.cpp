@@ -74,10 +74,30 @@ int main(int argc, char *argv[])
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
     SDL_LogWarn(0, "This is a debug build and should not be used in production.");
 #endif
-    SDL_Window *window = SDL_CreateWindow(WINDOW_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_HIDDEN);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    // In Windows we prioritize Direct3D first
+    // then for all other platforms we prioritize Vulkan and finally fallback to SDL2's default
+    SDL_LogVerbose(0, "Available render drivers:");
+    int render_driver_index = -1;
+    for (int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
+        SDL_RendererInfo renderer_info = {};
+        SDL_GetRenderDriverInfo(i, &renderer_info);
+        SDL_LogVerbose(0, "Renderer %d: %s", i, renderer_info.name);
+        auto render_name = std::string(renderer_info.name);
+        #ifdef _WIN32
+        if (render_name.find("direct3d") != std::string::npos)
+        {
+            render_driver_index = i;
+        }
+        #endif
+        if (render_name.find("vulkan") != std::string::npos && render_driver_index == -1)
+        {
+            render_driver_index = i;
+        }
+    }
+    SDL_Window *window = SDL_CreateWindow(WINDOW_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_HIDDEN | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, render_driver_index, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_Surface *surface;
-    SDL_Event event;
+    SDL_Event event; 
 
     if (!init_sdl())
     {
@@ -85,25 +105,26 @@ int main(int argc, char *argv[])
     }
     load_assets(renderer);
     SDL_SetWindowTitle(window, WINDOW_NAME);
-    auto main_menu = MainMenu(renderer, window);
-    auto fps_hud = FPSHUD(renderer, window);
+    auto main_menu = new MainMenu(renderer, window);
+    auto fps_hud = new FPSHUD(renderer, window);
     SDL_ShowWindow(window);
     while (true)
     {
         SDL_PollEvent(&event);
-        main_menu.handle_event(event);
+        main_menu->handle_event(event);
         if (event.type == SDL_QUIT)
         {
             return 0;
         }
         SDL_RenderClear(renderer);
-        main_menu.render();
-        fps_hud.render();
+        main_menu->render();
+        fps_hud->render();
         SDL_RenderPresent(renderer);
     }
 
     // Cleanup
-    main_menu.destroy();
+    delete main_menu;
+    delete fps_hud;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     cleanup_sdl();

@@ -28,7 +28,6 @@ public:
     {
         this->renderer = renderer;
         this->window = window;
-        SDL_LogVerbose(0, "Renderer: %p", renderer);
         bg_texture = IMG_LoadTexture(renderer, "assets/img/bg.jpeg");
         last_tick = SDL_GetTicks64();
         last_frame = 240;
