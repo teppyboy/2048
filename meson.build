@@ -2,8 +2,10 @@ project(
   '2048',
   'cpp',
   version: '0.1',
-  default_options: ['warning_level=3', 'cpp_std=c++20', 'default_library=static'],
+  default_options: ['warning_level=3', 'cpp_std=c++20', 'default_library=shared'],
 )
+
+meson.add_install_script('scripts/copy_deps.py')
 
 # Put SDL2 main first to fix build issue on Windows
 sdl2_main_dep = dependency('sdl2main')
@@ -20,6 +22,7 @@ exe = executable(
   '2048',
   'src/main.cpp',
   install: true,
+  install_dir: meson.current_source_dir() + '/bin',
   # win_subsystem: 'windows',
   dependencies: [sdl2_main_dep, sdl2_dep, sdl2_image_dep, sdl2_ttf_dep, sdl2_mixer_dep],
 )
