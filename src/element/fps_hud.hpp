@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL_ttf.h>
 #include "../screen/screen.hpp"
 
@@ -8,7 +10,6 @@ class FPSHUD : public Screen
     SDL_Rect fps_tex_rect;
     SDL_Surface *sf_text_fps;
     std::string fps_text;
-    Uint64 frame_start;
     Uint64 frame_end;
     Uint64 prev_tick;
     bool request_redraw_fps;
@@ -28,7 +29,7 @@ public:
         fps_tex_rect.y = 4;
         fps_tex_rect.h = sf_text_fps->h;
     }
-    int handle_event(SDL_Event event)
+    int handle_event(SDL_Event _)
     {
         return 0;
     }
@@ -37,7 +38,7 @@ public:
         frame_end = SDL_GetTicks64();
         // Render current FPS to screen
         auto time_elapsed = frame_end - prev_tick;
-        SDL_LogVerbose(0, "FPS time: %lld", time_elapsed);
+        // SDL_LogVerbose(0, "FPS time: %lld", time_elapsed);
         // Render every second
         if (time_elapsed > 1000)
         {
@@ -47,7 +48,7 @@ public:
         else if (request_redraw_fps)
         {
             request_redraw_fps = false;
-            fps_text = "FPS: " + std::to_string(round((double)1000 / time_elapsed));
+            fps_text = "FPS: " + std::to_string((int)round((double)1000 / time_elapsed));
             sf_text_fps = TTF_RenderUTF8_Blended(DEBUG_FONT, fps_text.c_str(), WHITE_RGB);
             fps_tex = SDL_CreateTextureFromSurface(renderer, sf_text_fps);
             TTF_SizeUTF8(DEBUG_FONT, fps_text.c_str(), &sf_text_fps->w, &sf_text_fps->h);
