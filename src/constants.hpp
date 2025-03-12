@@ -18,4 +18,5 @@ enum class State
     PAUSE,
     SETTINGS,
     SHOW_MESSAGEBOX,
+    NOTHING,
 };

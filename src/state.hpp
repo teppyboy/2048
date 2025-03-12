@@ -6,12 +6,25 @@
 State game_state = State::INTRO;
 
 // Transition mess
-bool request_transition = false;
-Screen *src_screen = nullptr;
-Screen *dst_screen = nullptr;
-int transition_duration = 2000;
-State transition_to = State::MAIN_MENU;
-
+bool transition_request;
+Screen *transition_src_screen;
+Screen *transition_dst_screen;
+int transition_duration;
+State transition_to;
+void transition_reset() {
+    transition_request = false;
+    transition_src_screen = nullptr;
+    transition_dst_screen = nullptr;
+    transition_duration = 0;
+    transition_to = State::NOTHING;
+}
+void transition_set(Screen *src, Screen *dst, int duration, State end_state) {
+    transition_src_screen = src;
+    transition_dst_screen = dst;
+    transition_duration = duration;
+    transition_to = end_state;
+    transition_request = true;
+}
 #ifdef DEBUG
 bool fps_hud_enabled = true;
 #else

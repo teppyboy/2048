@@ -125,16 +125,24 @@ int main(int argc, char *argv[])
             return 0;
         }
         SDL_RenderClear(renderer);
-        if (request_transition)
+        if (transition_request)
         {
             SDL_LogVerbose(0, "Transitioning from %d to %d", (int)game_state, (int)transition_to);
-            if (transition == nullptr) {
-                transition = new Transition(renderer, window, src_screen, dst_screen, transition_duration);
+            if (transition == nullptr)
+            {
+                SDL_LogVerbose(0, "Creating new transition with duration %d", transition_duration);
+                transition = new Transition(renderer, window, transition_src_screen, transition_dst_screen, transition_duration);
             }
             transition->render();
         }
         else
         {
+            if (transition != nullptr)
+            {
+                SDL_LogVerbose(0, "Destroying transition");
+                transition->destroy();
+                transition = nullptr;
+            }
             switch (game_state)
             {
             case State::INTRO:
@@ -149,6 +157,8 @@ int main(int argc, char *argv[])
                 game->render();
                 break;
             case State::GAME:
+                game->handle_event(event);
+                game->render();
                 break;
             case State::GAME_OVER:
                 break;

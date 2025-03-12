@@ -12,7 +12,8 @@ class Game : public Screen
     SDL_Window *window;
     // Board
     SDL_Rect board_rect;
-    public:
+
+public:
     Game(SDL_Renderer *renderer, SDL_Window *window)
     {
         this->renderer = renderer;

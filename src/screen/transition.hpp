@@ -29,6 +29,7 @@ public:
         this->src_screen = src_screen;
         this->dst_screen = dst_screen;
         this->screen_rect = new SDL_Rect();
+        this->duration_ms = duration_ms;
         start_time = SDL_GetTicks64();
         src_screen_as_texture = SDL_CreateTexture(
             renderer,
@@ -53,13 +54,14 @@ public:
     {
         auto time_elapsed = SDL_GetTicks64() - start_time;
         SDL_LogVerbose(0, "Time elapsed: %lld", time_elapsed);
+        SDL_LogVerbose(0, "Duration: %d", duration_ms);
         if (time_elapsed > duration_ms)
         {
             // Set the texture to full opacity and render copy to prevent black flickering
             SDL_SetTextureAlphaMod(dst_screen_as_texture, 255);
             SDL_RenderCopy(renderer, dst_screen_as_texture, NULL, NULL);
-            request_transition = false;
             game_state = transition_to;
+            transition_reset();
             return;
         }
         auto opacity = (int)((double)(SDL_GetTicks64() - start_time) / duration_ms * 255);

@@ -50,10 +50,8 @@ public:
     void start_button_callback()
     {
         SDL_LogVerbose(0, "Start button clicked.");
-        src_screen = this;
-        dst_screen = game;
-        request_transition = true;
-        transition_to = State::GAME_STARTING;
+        transition_set(this, game, 1000, State::GAME);
+
     }
     void load_button_callback()
     {
