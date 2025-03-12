@@ -3,8 +3,7 @@
 #include <functional>
 #include <SDL.h>
 #include <SDL_image.h>
-#include "screen.hpp"
-#include "main_menu.hpp"
+#include "../screen/screen.hpp"
 #include "../constants.hpp"
 #include "../element/button.hpp"
 #include "../state.hpp"

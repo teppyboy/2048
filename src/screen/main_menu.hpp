@@ -5,7 +5,6 @@
 #include <SDL_image.h>
 #include "game.hpp"
 #include "screen.hpp"
-#include "transition.hpp"
 #include <src/element/button.hpp>
 
 class MainMenu : public Screen

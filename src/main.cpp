@@ -11,7 +11,7 @@
 #include "screen/main_menu.hpp"
 #include "screen/game.hpp"
 #include "screen/intro.hpp"
-#include "screen/transition.hpp"
+#include "animation/transition.hpp"
 
 /**
  * Initializes SDL2 and its subsystems.
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 
     if (!init_sdl())
     {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Couldn't initialize SDL, check the console for more information.", window);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Failed to initialize SDL, check the console for more information.", window);
         return 1;
     }
     
@@ -160,10 +160,6 @@ int main(int argc, char *argv[])
             case State::MAIN_MENU:
                 main_menu->handle_event(event);
                 main_menu->render();
-                break;
-            case State::GAME_STARTING:
-                game->handle_event(event);
-                game->render();
                 break;
             case State::GAME:
                 game->handle_event(event);
