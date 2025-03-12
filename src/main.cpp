@@ -80,13 +80,13 @@ int main(int argc, char *argv[])
 #endif
     // In Windows we prioritize Direct3D first
     // then for all other platforms we prioritize Vulkan and finally fallback to SDL2's default
-    SDL_LogVerbose(0, "Available render drivers:");
+    SDL_LogInfo(0, "Available render drivers:");
     int render_driver_index = -1;
     for (int i = 0; i < SDL_GetNumRenderDrivers(); i++)
     {
         SDL_RendererInfo renderer_info = {};
         SDL_GetRenderDriverInfo(i, &renderer_info);
-        SDL_LogVerbose(0, "Renderer %d: %s", i, renderer_info.name);
+        SDL_LogInfo(0, "Renderer %d: %s", i, renderer_info.name);
         auto render_name = std::string(renderer_info.name);
 #ifdef _WIN32
         if (render_name.find("direct3d") != std::string::npos)
@@ -116,15 +116,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    SDL_SetWindowTitle(window, WINDOW_NAME);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
-
     auto game = new Game(renderer, window);
+    SDL_LogVerbose(0, "Game object created.");
     auto main_menu = new MainMenu(renderer, window, game);
     auto intro = new Intro(renderer, window, main_menu);
     auto fps_hud = new FPSHUD(renderer, window);
     Transition *transition = nullptr;
     SDL_ShowWindow(window);
+    SDL_SetWindowTitle(window, WINDOW_NAME);
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     while (true)
     {

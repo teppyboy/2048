@@ -28,11 +28,8 @@ public:
         request_redraw_fps = true;
         prev_tick = 1;
         last_draw_fps = 1;
-        fps_text = "FPS: " + DEFAULT_FPS;
-        sf_text_fps = TTF_RenderUTF8_Blended(DEBUG_FONT, fps_text.c_str(), WHITE_RGB);
-        fps_tex = SDL_CreateTextureFromSurface(renderer, sf_text_fps);
         fps_tex_rect.y = 4;
-        fps_tex_rect.h = sf_text_fps->h;
+        fps_tex_rect.h = -1;
     }
     int handle_event(SDL_Event _)
     {
@@ -66,6 +63,9 @@ public:
             SDL_GetWindowSizeInPixels(window, &fps_tex_rect.x, NULL);
             fps_tex_rect.w = sf_text_fps->w; // controls the width of the rect
             fps_tex_rect.x -= fps_tex_rect.w + 4;
+            if (fps_tex_rect.h == -1) {
+                fps_tex_rect.h = sf_text_fps->h;
+            }
             avg_frametime = 0;
         }
         prev_tick = current_tick;

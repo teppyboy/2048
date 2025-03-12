@@ -51,7 +51,7 @@ int load_assets(SDL_Renderer *renderer)
         auto text_surface = TTF_RenderUTF8_Blended(GAME_FONT_48, text, target_color);
         TTF_SizeUTF8(GAME_FONT_48, text, &text_surface->w, &text_surface->h);
         TILE_TEXT_SURFACES.push_back(text_surface);
-        TILE_TEXT_TEXTURES.push_back(SDL_CreateTextureFromSurface(renderer, TILE_TEXT_SURFACES.back()));
+        TILE_TEXT_TEXTURES.push_back(SDL_CreateTextureFromSurface(renderer, text_surface));
     }
     // Verify assets
     if (DEBUG_FONT == nullptr || UI_FONT_32 == nullptr || GAME_FONT_48 == nullptr || BTN_LEFT_TEXTURE == nullptr || BTN_RIGHT_TEXTURE == nullptr || BTN_MID_TEXTURE == nullptr || BTN_LEFT_HOVER_TEXTURE == nullptr || BTN_RIGHT_HOVER_TEXTURE == nullptr || BTN_MID_HOVER_TEXTURE == nullptr || BOARD_TEXTURE == nullptr)
