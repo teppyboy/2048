@@ -41,11 +41,11 @@ int load_assets(SDL_Renderer *renderer)
     // Game part
     BOARD_TEXTURE = IMG_LoadTexture(renderer, "assets/img/board.png");
     for (int i = 2; i <= 2048; i *= 2) {
-        std::string path = "assets/img/tile_2.png";
+        std::string path = "assets/img/tile_" + std::to_string(i) + ".png";
         TILE_TEXTURES.push_back(IMG_LoadTexture(renderer, path.c_str()));
-        auto target_color = DARK_RGB;
+        auto target_color = TILE_TEXT_DARK_RGB;
         if (i > 4) {
-            target_color = WHITE_RGB;
+            target_color = TILE_TEXT_LIGHT_RGB;
         }
         auto text = std::to_string(i).c_str();
         auto text_surface = TTF_RenderUTF8_Blended(GAME_FONT_48, text, target_color);
