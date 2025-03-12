@@ -40,7 +40,10 @@ The output will be in `./bin`
 + Rubik: https://fonts.google.com/specimen/Rubik
 + JetBrains Mono: https://www.jetbrains.com/lp/mono/
 + FOT-Yuruka Std (for the logo)
-### Assistances
+### Images
++ Main menu background: https://www.pixiv.net/en/artworks/121665267 (blurred)
++ Game background: https://www.pixiv.net/en/artworks/127189078 (blurred)
+### Assistance
 + StackOverflow
 + Perplexity (with Claude 3.7 Sonnet)
 

@@ -31,7 +31,7 @@ public:
         this->renderer = renderer;
         this->window = window;
         this->game = game;
-        bg_texture = IMG_LoadTexture(renderer, "assets/img/bg.jpeg");
+        bg_texture = IMG_LoadTexture(renderer, "assets/img/bg_menu.png");
         last_tick = SDL_GetTicks64();
         last_frame = 240;
         logo_texture = IMG_LoadTexture(renderer, "assets/img/logo.png");

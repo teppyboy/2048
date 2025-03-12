@@ -10,6 +10,8 @@ class Game : public Screen
 {
     SDL_Renderer *renderer;
     SDL_Window *window;
+    // Background
+    SDL_Texture *bg_texture;
     // Board
     SDL_Rect board_rect;
 
@@ -18,6 +20,7 @@ public:
     {
         this->renderer = renderer;
         this->window = window;
+        bg_texture = IMG_LoadTexture(renderer, "assets/img/bg_game.png");
         board_rect.x = 1280 / 2 - 512 / 2;
         board_rect.y = 720 / 2 - 512 / 2;
         board_rect.w = 512;
@@ -29,6 +32,7 @@ public:
     }
     void render()
     {
+        SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
         SDL_RenderCopy(renderer, BOARD_TEXTURE, NULL, &board_rect);
     }
     ~Game()

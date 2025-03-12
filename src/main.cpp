@@ -106,9 +106,16 @@ int main(int argc, char *argv[])
 
     if (!init_sdl())
     {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Couldn't initialize SDL, check the console for more information.", window);
         return 1;
     }
-    load_assets(renderer);
+    
+    if (!load_assets(renderer))
+    {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Failed to load assets, check the console for more information.", window);
+        return 1;
+    }
+
     SDL_SetWindowTitle(window, WINDOW_NAME);
     auto game = new Game(renderer, window);
     auto main_menu = new MainMenu(renderer, window, game);
