@@ -39,7 +39,7 @@ public:
         this->add_tile();
         this->add_tile();
     }
-    void add_tile()
+    std::pair<int, int> add_tile()
     {
         std::vector<std::pair<int, int>> empty_tiles;
         for (int i = 0; i < this->size; i++)
@@ -54,20 +54,23 @@ public:
         }
         if (empty_tiles.size() == 0)
         {
-            return;
+            return std::pair<int, int>(-1, -1);
         }
         std::uniform_int_distribution<int> dist(0, empty_tiles.size() - 1);
         auto [i, j] = empty_tiles[dist(rng)];
         std::uniform_int_distribution<int> tile_dist(0, 9);
         this->grid[i][j] = (tile_dist(rng) < 9) ? 2 : 4;
+        return std::pair<int, int>(i, j);
     }
     bool move(int direction)
     {
         bool moved = false;
         for (int i = 0; i < direction; i++)
         {
+            SDL_LogVerbose(0, "Rotating board clockwise...");
             rotate_clockwise();
         }
+        // Move tiles to the up
         for (int row = 0; row < size; row++)
         {
             for (int col = 1; col < size; col++)
@@ -78,6 +81,7 @@ public:
                 int curr = col;
                 while (curr > 0 && grid[row][curr - 1] == 0)
                 {
+                    SDL_LogVerbose(0, "Moving (%d, %d) to (%d, %d)", row, curr, row, curr - 1);
                     grid[row][curr - 1] = grid[row][curr];
                     grid[row][curr] = 0;
                     curr--;
@@ -85,6 +89,7 @@ public:
                 }
                 if (curr > 0 && grid[row][curr - 1] == grid[row][curr])
                 {
+                    SDL_LogVerbose(0, "Merging (%d, %d) with (%d, %d)", row, curr, row, curr - 1);
                     grid[row][curr - 1] *= 2;
                     grid[row][curr] = 0;
                     moved = true;

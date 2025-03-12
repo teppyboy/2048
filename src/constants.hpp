@@ -8,7 +8,8 @@
 #define WINDOW_NAME "2048!"
 
 SDL_Color WHITE_RGB = {255, 255, 255, 0};
-SDL_Color DARK_RGB = {117, 100, 82, 0};
+SDL_Color TILE_TEXT_DARK_RGB = {117, 100, 82, 0};
+SDL_Color TILE_TEXT_LIGHT_RGB = {249, 246, 242, 0};
 enum class State
 {
     INTRO,
