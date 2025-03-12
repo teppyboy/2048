@@ -4,6 +4,7 @@
 #include "constants.hpp"
 #include "screen/screen.hpp"
 State game_state = State::INTRO;
+int game_best_score = 0;
 
 // Transition mess
 bool transition_request;

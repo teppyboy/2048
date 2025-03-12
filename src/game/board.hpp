@@ -125,6 +125,8 @@ private:
                     grid[row][target_col] = 0;
                     merged[target_col - 1] = true;
                     result.moved = true;
+                    // add score
+                    score += grid[row][target_col - 1];
                 }
                 // If the tile moved but didn't merge, record the move
                 else if (target_col != col)
@@ -197,7 +199,6 @@ public:
         {
             auto fromPos = convert_position(move.from_row, move.from_col, (4 - direction) % 4);
             auto toPos = convert_position(move.to_row, move.to_col, (4 - direction) % 4);
-
             move.from_row = fromPos.first;
             move.from_col = fromPos.second;
             move.to_row = toPos.first;

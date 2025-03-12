@@ -22,7 +22,13 @@ class Game : public Screen
     Uint64 animation_start_time;
     Uint64 current_tick;
     std::pair<int, int> last_new_tile_pos;
-
+    // Score
+    SDL_Rect score_rect;
+    SDL_Rect score_text_rect;
+    SDL_Texture *score_text_texture;
+    SDL_Rect best_score_rect;
+    SDL_Rect best_score_text_rect;
+    SDL_Texture *best_score_text_texture;
 private:
     void _render()
     {
@@ -71,10 +77,12 @@ public:
         // Board has a size of 2048x2048
         // Tile has a size of 437x437
         bg_texture = IMG_LoadTexture(renderer, "assets/img/bg_game.png");
-        board_rect.x = 1280 / 2 - 512 / 2;
-        board_rect.y = 720 / 2 - 512 / 2;
-        board_rect.w = 512;
-        board_rect.h = 512;
+        board_rect = {
+            1280 / 2 - 512 / 2,
+            720 / 2 - 512 / 2,
+            512,
+            512,
+        };
         tile_size = 437 / 4;
         this->last_new_tile_pos = {-1, -1};
         this->animation_start_time = 0;
@@ -88,6 +96,39 @@ public:
             SDL_TEXTUREACCESS_TARGET,
             DEFAULT_WIDTH, DEFAULT_HEIGHT);
         SDL_SetTextureBlendMode(screen_as_texture, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        // Score
+        score_rect = {
+            (1280 / 2 - 512 / 2) / 2 - 220 / 2,
+            720 / 2 - 94,
+            220,
+            80,
+        };
+        SDL_Surface *text_surface = TTF_RenderUTF8_Blended(UI_FONT_24, "SCORE", TILE_TEXT_DARK_RGB);
+        score_text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        TTF_SizeUTF8(UI_FONT_24, "SCORE", &text_surface->w, &text_surface->h);
+        score_text_rect = {
+            score_rect.x + score_rect.w / 2 - text_surface->w / 2,
+            score_rect.y + 6,
+            text_surface->w,
+            text_surface->h,
+        };
+        // Best score
+        best_score_rect = {
+            (1280 / 2 - 512 / 2) / 2 - 220 / 2,
+            720 / 2 + 14,
+            220,
+            80,
+        };
+        text_surface = TTF_RenderUTF8_Blended(UI_FONT_24, "BEST", TILE_TEXT_DARK_RGB);
+        best_score_text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        TTF_SizeUTF8(UI_FONT_24, "BEST", &text_surface->w, &text_surface->h);
+        best_score_text_rect = {
+            best_score_rect.x + best_score_rect.w / 2 - text_surface->w / 2,
+            best_score_rect.y + 6,
+            text_surface->w,
+            text_surface->h,
+        };
     }
     int handle_event(SDL_Event event)
     {
@@ -282,6 +323,53 @@ public:
             move_result.merged_tiles.clear();
         }
     }
+    void render_scoreboard() {
+        // The rectangle
+        // Score
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 30);
+        SDL_RenderFillRect(renderer, &score_rect);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100);
+        SDL_RenderDrawRect(renderer, &score_rect);
+        // Best score
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 30);
+        SDL_RenderFillRect(renderer, &best_score_rect);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100);
+        SDL_RenderDrawRect(renderer, &best_score_rect);
+        // The "SCORE" text
+        SDL_RenderCopy(renderer, score_text_texture, NULL, &score_text_rect);
+        // The "BEST" text
+        SDL_RenderCopy(renderer, best_score_text_texture, NULL, &best_score_text_rect);
+        // The score
+        SDL_Surface *score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(board.score).c_str(), TILE_TEXT_DARK_RGB);
+        SDL_Texture *score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
+        TTF_SizeUTF8(UI_FONT_BOLD_32, std::to_string(board.score).c_str(), &score_surface->w, &score_surface->h);
+        SDL_Rect score_text_rect = {
+            score_rect.x + score_rect.w / 2 - score_surface->w / 2,
+            score_rect.y + 36,
+            score_surface->w,
+            score_surface->h,
+        };
+        if (board.score > game_best_score)
+        {
+            game_best_score = board.score;
+        }
+        // The best score
+        SDL_Surface *best_score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(game_best_score).c_str(), TILE_TEXT_DARK_RGB);
+        SDL_Texture *best_score_texture = SDL_CreateTextureFromSurface(renderer, best_score_surface);
+        TTF_SizeUTF8(UI_FONT_BOLD_32, std::to_string(game_best_score).c_str(), &best_score_surface->w, &best_score_surface->h);
+        SDL_Rect best_score_text_rect = {
+            best_score_rect.x + best_score_rect.w / 2 - best_score_surface->w / 2,
+            best_score_rect.y + 36,
+            best_score_surface->w,
+            best_score_surface->h,
+        };
+        SDL_RenderCopy(renderer, score_texture, NULL, &score_text_rect);
+        SDL_RenderCopy(renderer, best_score_texture, NULL, &best_score_text_rect);
+        SDL_DestroyTexture(score_texture);
+        SDL_DestroyTexture(best_score_texture);
+        SDL_FreeSurface(score_surface);
+        SDL_FreeSurface(best_score_surface);
+    }
     void render()
     {
         current_tick = SDL_GetTicks64();
@@ -291,6 +379,7 @@ public:
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
             SDL_RenderClear(renderer);
             _render();
+            render_scoreboard();
             SDL_SetRenderTarget(renderer, NULL);
             move_result.moved = false;
         }
