@@ -56,6 +56,7 @@ public:
         text_rect.y = y + h / 2 - text_surface->h / 2;
         text_rect.w = text_surface->w;
         text_rect.h = text_surface->h;
+        SDL_FreeSurface(text_surface);
     }
     void render()
     {

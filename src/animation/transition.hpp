@@ -85,7 +85,9 @@ public:
     }
     ~Transition()
     {
-        return;
+        SDL_DestroyTexture(src_screen_as_texture);
+        SDL_DestroyTexture(dst_screen_as_texture);
+        delete screen_rect;
     }
     void destroy()
     {
