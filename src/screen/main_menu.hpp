@@ -39,11 +39,11 @@ public:
         logo_rect.w = 512;
         logo_rect.h = 512;
         // Buttons
-        start_button = new Button(renderer, window, "Start", 1280 / 2 - 300 / 2, 720 / 2, 300, 60, [&]()
+        start_button = new Button(renderer, window, "START", 1280 / 2 - 300 / 2, 720 / 2, 300, 60, [&]()
                                   { start_button_callback(); });
-        load_button = new Button(renderer, window, "Load", 1280 / 2 - 300 / 2, 720 / 2 + 80, 300, 60, [&]()
+        load_button = new Button(renderer, window, "LOAD", 1280 / 2 - 300 / 2, 720 / 2 + 80, 300, 60, [&]()
                                      { settings_button_callback(); });
-        settings_button = new Button(renderer, window, "Settings", 1280 / 2 - 300 / 2, 720 / 2 + 80 + 80, 300, 60, [&]()
+        settings_button = new Button(renderer, window, "SETTINGS", 1280 / 2 - 300 / 2, 720 / 2 + 80 + 80, 300, 60, [&]()
                                      { settings_button_callback(); });
     }
     void start_button_callback()

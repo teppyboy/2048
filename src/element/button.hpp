@@ -49,9 +49,9 @@ public:
         btn_right_rect = {x + w - calc_w, y, calc_w, h};
         btn_mid_rect = {x - (calc_w - w / 70), y, w + (calc_w - w / 70) * 2, h};
         // Text part
-        SDL_Surface *text_surface = TTF_RenderUTF8_Blended(UI_FONT_32, text.c_str(), WHITE_RGB);
+        SDL_Surface *text_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, text.c_str(), TILE_TEXT_LIGHT_RGB);
         text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-        TTF_SizeUTF8(UI_FONT_32, text.c_str(), &text_surface->w, &text_surface->h);
+        TTF_SizeUTF8(UI_FONT_BOLD_32, text.c_str(), &text_surface->w, &text_surface->h);
         text_rect.x = x + w / 2 - text_surface->w / 2;
         text_rect.y = y + h / 2 - text_surface->h / 2;
         text_rect.w = text_surface->w;

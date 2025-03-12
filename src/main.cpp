@@ -49,7 +49,7 @@ bool init_sdl()
  * Cleanup SDL2 and its subsystems.
  *
  */
-void cleanup_sdl()
+void destroy_sdl()
 {
     SDL_LogVerbose(0, "Cleaning up SDL application '%s'...", WINDOW_NAME);
     TTF_Quit();
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
         SDL_PollEvent(&event);
         if (event.type == SDL_QUIT)
         {
-            return 0;
+            break;
         }
         SDL_RenderClear(renderer);
         if (transition_request)
@@ -185,9 +185,12 @@ int main(int argc, char *argv[])
     // Cleanup
     delete main_menu;
     delete fps_hud;
+    delete game;
+    delete intro;
+    destroy_assets();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    cleanup_sdl();
+    destroy_sdl();
 
     return 0;
 }
