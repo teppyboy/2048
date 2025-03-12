@@ -42,7 +42,6 @@ public:
         this->callback = callback;
         // The left and right part of the button has 70x256 size, so we can do some math here.
         // Button part
-        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
         btn_rect = {x, y, w, h};
         auto calc_w = (int)ceil(70 * ((double)h / 256));
         SDL_LogVerbose(0, "[Button] Calculated width: %d", (int)(70 * ((double)h / 256)));

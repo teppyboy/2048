@@ -51,7 +51,6 @@ public:
     {
         SDL_LogVerbose(0, "Start button clicked.");
         transition_set(this, game, 1000, State::GAME);
-
     }
     void load_button_callback()
     {

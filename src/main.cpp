@@ -117,6 +117,8 @@ int main(int argc, char *argv[])
     }
 
     SDL_SetWindowTitle(window, WINDOW_NAME);
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
+
     auto game = new Game(renderer, window);
     auto main_menu = new MainMenu(renderer, window, game);
     auto intro = new Intro(renderer, window, main_menu);
