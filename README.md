@@ -4,11 +4,13 @@ This is 2048 built with SDL2 with optional features, written as an assignment fo
 
 ## Preview
 
-TODO
+![Preview 1](.github/assets/preview1.png "Preview of the game")
+![Preview 2](.github/assets/preview2.png "Preview of the game")
 
 ## Installation
 
-TODO 
+Go to [releases](https://github.com/teppyboy/2048/releases/latest) and download the latest version available for your platform,
+if somehow a platform is not available then you can build from source using the tutorial below.
 
 ## Building
 To build this game, you must have Meson, Ninja, CMake, make, g++/clang++, SDL2, SDL2_mixer, SDL2_ttf, SDL2_image along with required headers installed.
@@ -39,10 +41,12 @@ The output will be in `./bin`
 ### Fonts
 + Rubik: https://fonts.google.com/specimen/Rubik
 + JetBrains Mono: https://www.jetbrains.com/lp/mono/
-+ FOT-Yuruka Std (for the logo)
-### Images
-+ Main menu background: https://www.pixiv.net/en/artworks/121665267 (blurred)
-+ Game background: https://www.pixiv.net/en/artworks/127189078 (blurred)
++ FOT-Yuruka Std (for the logo and some text)
+### Images (all are blurred)
++ Main menu background: https://www.pixiv.net/en/artworks/121665267
++ Game background: https://www.pixiv.net/en/artworks/127189078
++ Saves background: https://www.pixiv.net/en/artworks/124283216
++ Settings background: https://www.pixiv.net/en/artworks/123982957
 ### Assistance
 + StackOverflow
 + Perplexity (with Claude 3.7 Sonnet)
