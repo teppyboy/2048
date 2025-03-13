@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include "screen.hpp"
 #include "game.hpp"
+#include "saves.hpp"
 #include "../constants.hpp"
 #include "../element/button.hpp"
 #include "../state.hpp"
@@ -25,6 +26,7 @@ class Win : public Screen
     Game *game;
     GameOver *game_over;
     Uint64 start_time;
+    Saves *saves;
 
 private:
     void render_animation_step_1()
@@ -89,20 +91,22 @@ private:
     void continue_playing_button_callback()
     {
         game->continue_playing_after_win = true;
-        transition_set(this, game, 1000, State::GAME);
+        transition_set(this, game, 500, State::GAME);
     }
     void save_button_callback()
     {
-        transition_set(this, game, 1000, State::GAME);
+        set_prev(this, State::WIN);
+        transition_set(this, saves, 500, State::SAVES);
     }
 
 public:
-    Win(SDL_Renderer *renderer, SDL_Window *window, Game *game, GameOver *game_over)
+    Win(SDL_Renderer *renderer, SDL_Window *window, Game *game, GameOver *game_over, Saves *saves)
     {
         this->renderer = renderer;
         this->window = window;
         this->game = game;
         this->game_over = game_over;
+        this->saves = saves;
         first_final = true;
         start_time = 0;
         game_over_logo = IMG_LoadTexture(renderer, "assets/img/win.png");
@@ -118,7 +122,7 @@ public:
                                              { continue_playing_button_callback(); });
         play_again_button = new Button(renderer, window, "PLAY AGAIN", 1280 / 2 - 300 / 2 + 320, 640, 300, 60, [&]()
                                        { play_again_button_callback(); });
-        save_button = new Button(renderer, window, "SAVE GAME", 1280 / 2 - 300 / 2 - 320, 640, 300, 60, [&]()
+        save_button = new Button(renderer, window, "LOAD / SAVE", 1280 / 2 - 300 / 2 - 320, 640, 300, 60, [&]()
                                  { save_button_callback(); });
         game_screen_as_texture = SDL_CreateTexture(
             renderer,

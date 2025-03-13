@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "screen.hpp"
+#include "saves.hpp"
 #include "main_menu.hpp"
 #include "game.hpp"
 #include "../constants.hpp"
@@ -12,8 +13,8 @@ class Pause : public Screen
 {
     SDL_Renderer *renderer;
     SDL_Window *window;
-    SDL_Texture *game_over_logo;
-    SDL_Rect game_over_logo_rect;
+    SDL_Texture *pause_logo;
+    SDL_Rect pause_logo_rect;
     // Button
     Button *play_again_button;
     Button *continue_playing_button;
@@ -27,6 +28,7 @@ class Pause : public Screen
     Game *game;
     MainMenu *main_menu;
     Uint64 start_time;
+    Saves *saves;
 
 private:
     void render_animation_step_1()
@@ -63,10 +65,10 @@ private:
         SDL_RenderClear(renderer);
         // Render everything to the game over screen
         // Set opacity
-        SDL_SetTextureAlphaMod(game_over_logo, opacity);
+        SDL_SetTextureAlphaMod(pause_logo, opacity);
         SDL_RenderCopy(renderer, game_screen_as_texture, NULL, NULL);
         SDL_LogVerbose(0, "Rendering our screen with opacity %lld", opacity);
-        SDL_RenderCopy(renderer, game_over_logo, NULL, &game_over_logo_rect);
+        SDL_RenderCopy(renderer, pause_logo, NULL, &pause_logo_rect);
         play_again_button->render();
         continue_playing_button->render();
         save_button->render();
@@ -87,7 +89,7 @@ private:
     void play_again_button_callback()
     {
         game->reset();
-        transition_set(this, game, 1000, State::GAME);
+        transition_set(this, game, 1000, State::PAUSE);
     }
     void continue_playing_button_callback()
     {
@@ -95,12 +97,13 @@ private:
     }
     void save_button_callback()
     {
-        transition_set(this, game, 1000, State::GAME);
+        set_prev(this, State::PAUSE);
+        transition_set(this, saves, 500, State::SAVES);
     }
     void main_menu_button_callback()
     {
         game->reset();
-        transition_set(this, main_menu, 1000, State::MAIN_MENU);
+        transition_set(this, main_menu, 500, State::MAIN_MENU);
     }
     void settings_button_callback()
     {
@@ -108,16 +111,17 @@ private:
     }
 
 public:
-    Pause(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu *main_menu)
+    Pause(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu *main_menu, Saves *saves)
     {
         this->renderer = renderer;
         this->window = window;
         this->game = game;
         this->main_menu = main_menu;
+        this->saves = saves;
         start_time = 0;
-        game_over_logo = IMG_LoadTexture(renderer, "assets/img/win.png");
-        SDL_SetTextureBlendMode(game_over_logo, SDL_BLENDMODE_BLEND);
-        game_over_logo_rect = {
+        pause_logo = IMG_LoadTexture(renderer, "assets/img/paused.png");
+        SDL_SetTextureBlendMode(pause_logo, SDL_BLENDMODE_BLEND);
+        pause_logo_rect = {
             1280 / 2 - 512 / 2,
             -128,
             512,
@@ -127,7 +131,7 @@ public:
                                              { continue_playing_button_callback(); });
         play_again_button = new Button(renderer, window, "PLAY AGAIN", 1280 / 2 - 300 / 2, 720 / 2 - 10, 300, 60, [&]()
                                        { play_again_button_callback(); });
-        save_button = new Button(renderer, window, "SAVE GAME", 1280 / 2 - 300 / 2, 720 / 2 + 60, 300, 60, [&]()
+        save_button = new Button(renderer, window, "LOAD / SAVE", 1280 / 2 - 300 / 2, 720 / 2 + 60, 300, 60, [&]()
                                  { save_button_callback(); });
         settings_button = new Button(renderer, window, "SETTINGS", 1280 / 2 - 300 / 2, 720 / 2 + 10 + 60 + 60, 300, 60, [&]()
                                      { settings_button_callback(); });
@@ -198,13 +202,13 @@ public:
     }
     ~Pause()
     {
-        SDL_DestroyTexture(game_over_logo);
+        SDL_DestroyTexture(pause_logo);
         SDL_DestroyTexture(game_screen_as_texture);
         SDL_DestroyTexture(our_screen_as_texture);
         delete play_again_button;
         delete continue_playing_button;
         delete save_button;
-        SDL_DestroyTexture(game_over_logo);
+        SDL_DestroyTexture(pause_logo);
     }
     void destroy()
     {

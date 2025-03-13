@@ -8,9 +8,19 @@
 State game_state = State::INTRO;
 Settings settings = Settings::load();
 UserData user_data = UserData::load();
+Screen *main_menu = nullptr;
+Screen *game = nullptr;
 bool init_game_over = false;
 bool init_game_win = false;
 bool init_game_pause = false;
+
+// Saves screen
+Screen *prev_screen = nullptr;
+State prev_state = State::NOTHING;
+void set_prev(Screen *prev, State target_prev_state) {
+    prev_screen = prev;
+    prev_state = target_prev_state;
+}
 
 // Transition mess
 bool transition_request;

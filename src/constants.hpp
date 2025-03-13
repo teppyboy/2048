@@ -19,6 +19,7 @@ enum class State
     GAME_STARTING,
     GAME_OVER,
     PAUSE,
+    SAVES,
     SETTINGS,
     SHOW_MESSAGEBOX,
     NOTHING,

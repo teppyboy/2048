@@ -10,7 +10,6 @@
 class MainMenu : public Screen
 {
     SDL_Texture *bg_texture;
-    SDL_Rect bg_rect;
     SDL_Renderer *renderer;
     SDL_Window *window;
     SDL_Event event;
@@ -21,18 +20,17 @@ class MainMenu : public Screen
     SDL_Texture *logo_texture;
     SDL_Rect logo_rect;
     uint64_t last_tick;
-    int last_frame;
     Screen *game;
-    Screen *transition;
+    Screen *saves;
 public:
-    MainMenu(SDL_Renderer *renderer, SDL_Window *window, Screen *game)
+    MainMenu(SDL_Renderer *renderer, SDL_Window *window, Screen *game, Screen *saves)
     {
         this->renderer = renderer;
         this->window = window;
         this->game = game;
+        this->saves = saves;
         bg_texture = IMG_LoadTexture(renderer, "assets/img/bg_menu.png");
         last_tick = SDL_GetTicks64();
-        last_frame = 240;
         logo_texture = IMG_LoadTexture(renderer, "assets/img/logo.png");
         logo_rect.x = 1280 / 2 - 512 / 2;
         logo_rect.y = -76;
@@ -42,18 +40,20 @@ public:
         start_button = new Button(renderer, window, "START", 1280 / 2 - 300 / 2, 720 / 2, 300, 60, [&]()
                                   { start_button_callback(); });
         load_button = new Button(renderer, window, "LOAD", 1280 / 2 - 300 / 2, 720 / 2 + 80, 300, 60, [&]()
-                                     { settings_button_callback(); });
+                                     { load_button_callback(); });
         settings_button = new Button(renderer, window, "SETTINGS", 1280 / 2 - 300 / 2, 720 / 2 + 80 + 80, 300, 60, [&]()
                                      { settings_button_callback(); });
     }
     void start_button_callback()
     {
         SDL_LogVerbose(0, "Start button clicked.");
-        transition_set(this, game, 1000, State::GAME);
+        transition_set(this, game, 500, State::GAME);
     }
     void load_button_callback()
     {
         SDL_LogVerbose(0, "Load button clicked.");
+        set_prev(this, State::MAIN_MENU);
+        transition_set(this, saves, 500, State::SAVES);
     }
     void settings_button_callback()
     {

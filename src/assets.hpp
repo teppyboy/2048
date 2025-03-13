@@ -5,8 +5,12 @@
 #include "constants.hpp"
 #include <SDL_ttf.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 
-TTF_Font *DEBUG_FONT, *UI_FONT_BOLD_32, *GAME_FONT_48, *GAME_FONT_46, *UI_FONT_24;
+// Audio
+Mix_Music *BGM;
+Mix_Chunk *SWIPE_SFX;
+TTF_Font *DEBUG_FONT, *UI_FONT_BOLD_32, *UI_FONT_YURUKA_40, *GAME_FONT_48, *GAME_FONT_40, *UI_FONT_24;
 // Button
 SDL_Texture *BTN_LEFT_TEXTURE, *BTN_RIGHT_TEXTURE, *BTN_MID_TEXTURE, *BTN_LEFT_HOVER_TEXTURE, *BTN_RIGHT_HOVER_TEXTURE, *BTN_MID_HOVER_TEXTURE;
 // Game
@@ -30,11 +34,14 @@ std::unordered_map<int, int> TILE_VALUE_INDEX_MAP = {
 SDL_Texture *BOARD_TEXTURE;
 int load_assets(SDL_Renderer *renderer)
 {
+    BGM = Mix_LoadMUS("assets/audio/bg.ogg");
+    SWIPE_SFX = Mix_LoadWAV("assets/audio/swipe.wav");
     DEBUG_FONT = TTF_OpenFont("assets/fonts/Jetbrains-Mono.ttf", 12);
     UI_FONT_24 = TTF_OpenFont("assets/fonts/Rubik-Light.ttf", 24);
     UI_FONT_BOLD_32 = TTF_OpenFont("assets/fonts/Rubik-Regular.ttf", 32);
+    UI_FONT_YURUKA_40 = TTF_OpenFont("assets/fonts/FOT-Yuruka-STD.ttf", 40);
     GAME_FONT_48 = TTF_OpenFont("assets/fonts/Rubik-Medium.ttf", 48);
-    GAME_FONT_46 = TTF_OpenFont("assets/fonts/Rubik-Medium.ttf", 48);
+    GAME_FONT_40 = TTF_OpenFont("assets/fonts/Rubik-Medium.ttf", 40);
     BTN_MID_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/middle.png");
     BTN_LEFT_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/left.png");
     BTN_RIGHT_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/right.png");
@@ -62,8 +69,8 @@ int load_assets(SDL_Renderer *renderer)
         }
         else
         {
-            text_surface = TTF_RenderUTF8_Blended(GAME_FONT_46, text, target_color);
-            TTF_SizeUTF8(GAME_FONT_46, text, &text_surface->w, &text_surface->h);
+            text_surface = TTF_RenderUTF8_Blended(GAME_FONT_40, text, target_color);
+            TTF_SizeUTF8(GAME_FONT_40, text, &text_surface->w, &text_surface->h);
         }
         TILE_TEXT_SURFACES.push_back(text_surface);
         TILE_TEXT_TEXTURES.push_back(SDL_CreateTextureFromSurface(renderer, text_surface));

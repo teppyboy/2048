@@ -4,6 +4,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
+#include "audio.hpp"
 #include "constants.hpp"
 #include "assets.hpp"
 #include "state.hpp"
@@ -13,6 +14,7 @@
 #include "screen/game_over.hpp"
 #include "screen/intro.hpp"
 #include "screen/pause.hpp"
+#include "screen/saves.hpp"
 #include "screen/win.hpp"
 #include "animation/transition.hpp"
 
@@ -61,20 +63,6 @@ void destroy_sdl()
     SDL_Quit();
 }
 
-void play_bgm()
-{
-    Mix_Music *sound = Mix_LoadMUS("assets/audio/bg.mp3");
-    if (!sound)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Mix_LoadWAV failed: %s", Mix_GetError());
-        Mix_CloseAudio();
-    }
-    if (Mix_PlayMusic(sound, 0))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Mix_PlayChannel failed: %s", Mix_GetError());
-    }
-}
-
 int main(int argc, char *argv[])
 {
 #ifdef DEBUG
@@ -120,18 +108,27 @@ int main(int argc, char *argv[])
     }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
-    auto game = new Game(renderer, window);
-    SDL_LogVerbose(0, "Game object created.");
-    auto main_menu = new MainMenu(renderer, window, game);
-    auto game_over = new GameOver(renderer, window, game, main_menu);
-    auto pause = new Pause(renderer, window, game, main_menu);
-    auto win = new Win(renderer, window, game, game_over);
-    auto intro = new Intro(renderer, window, main_menu);
+
+    // Apply settings
+    set_bgm_volume(settings.music_volume);
+    set_sfx_volume(settings.sfx_volume);
+
     auto fps_hud = new FPSHUD(renderer, window);
+    auto game = new Game(renderer, window);
+    auto saves = new Saves(renderer, window, game);
+    auto main_menu = new MainMenu(renderer, window, game, saves);
+    auto intro = new Intro(renderer, window, main_menu);
+    auto game_over = new GameOver(renderer, window, game, main_menu, saves);
+    auto pause = new Pause(renderer, window, game, main_menu, saves);
+    auto win = new Win(renderer, window, game, game_over, saves);
     Transition *transition = nullptr;
     SDL_ShowWindow(window);
     SDL_SetWindowTitle(window, WINDOW_NAME);
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+    SDL_AddTimer(1000, [](Uint32 interval, void *_) -> Uint32
+                 {
+            play_bgm();
+            return 0; }, nullptr);
     while (true)
     {
         SDL_PollEvent(&event);
@@ -158,6 +155,7 @@ int main(int argc, char *argv[])
                 transition->destroy();
                 transition = nullptr;
             }
+            SDL_LogVerbose(0, "Rendering game state %d", (int)game_state);
             switch (game_state)
             {
             case State::INTRO:
@@ -182,6 +180,10 @@ int main(int argc, char *argv[])
             case State::SETTINGS:
                 break;
             case State::SHOW_MESSAGEBOX:
+                break;
+            case State::SAVES:
+                saves->handle_event(event);
+                saves->render();
                 break;
             case State::WIN:
                 win->handle_event(event);
