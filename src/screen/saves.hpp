@@ -113,6 +113,17 @@ public:
             btn->handle_event(event);
         }
         return_btn->handle_event(event);
+        if (event.type == SDL_KEYDOWN)
+        {
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_ESCAPE:
+                return_callback();
+                return 0;
+            default:
+                return 0;
+            }
+        }
         return 0;
     }
     void render_save_list()
