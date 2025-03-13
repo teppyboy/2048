@@ -11,7 +11,7 @@ public:
     int sfx_volume, music_volume;
     static Settings default_settings()
     {
-        return Settings{DEFAULT_WIDTH, DEFAULT_HEIGHT, false, 100, 100};
+        return Settings{DEFAULT_WIDTH, DEFAULT_HEIGHT, false, 100, 70};
     }
     static Settings from_json(const nlohmann::json &j)
     {
@@ -40,9 +40,17 @@ public:
 };
 
 // Save and required functions
+struct Save
+{
+    long long date;
+    int score;
+    std::vector<std::vector<int>> grid;
+};
+
 void to_json(nlohmann::json &j, const Save &save)
 {
     j = nlohmann::json{
+        {"date", save.date},
         {"score", save.score},
         {"grid", save.grid}};
 }
@@ -50,12 +58,8 @@ void from_json(const nlohmann::json &j, Save &save)
 {
     j.at("score").get_to(save.score);
     j.at("grid").get_to(save.grid);
+    j.at("date").get_to(save.date);
 }
-struct Save
-{
-    int score;
-    std::vector<std::vector<int>> grid;
-};
 
 struct UserData
 {
