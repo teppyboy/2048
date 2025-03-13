@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL_mixer.h>
 #include <SDL.h>
 #include "assets.hpp"
