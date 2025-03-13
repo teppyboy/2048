@@ -78,6 +78,10 @@ public:
             avg_frametime = 0;
         }
         prev_tick = current_tick;
+        if (fps_tex_rect.w < 0)
+        {
+            return;
+        }
         SDL_RenderCopy(renderer, fps_tex, NULL, &fps_tex_rect);
     }
     ~FPSHUD()
