@@ -6,6 +6,7 @@
 State game_state = State::INTRO;
 bool init_game_over = false;
 bool init_game_win = false;
+bool init_game_pause = false;
 int game_best_score = 0;
 int game_score = 0;
 

@@ -157,6 +157,8 @@ public:
         }
         if (event.type == SDL_KEYDOWN)
         {
+            // init_game_win = true;
+            // game_state = State::WIN;
             switch (event.key.keysym.sym)
             {
             case SDLK_w:
@@ -171,6 +173,10 @@ public:
             case SDLK_a:
                 move_result = board.move(3); // Left
                 break;
+            case SDLK_ESCAPE:
+                init_game_pause = true;
+                game_state = State::PAUSE;
+                return 0;
             default:
                 return 0;
             }

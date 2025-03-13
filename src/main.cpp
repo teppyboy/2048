@@ -12,6 +12,7 @@
 #include "screen/game.hpp"
 #include "screen/game_over.hpp"
 #include "screen/intro.hpp"
+#include "screen/pause.hpp"
 #include "screen/win.hpp"
 #include "animation/transition.hpp"
 
@@ -123,6 +124,7 @@ int main(int argc, char *argv[])
     SDL_LogVerbose(0, "Game object created.");
     auto main_menu = new MainMenu(renderer, window, game);
     auto game_over = new GameOver(renderer, window, game, main_menu);
+    auto pause = new Pause(renderer, window, game, main_menu);
     auto win = new Win(renderer, window, game);
     auto intro = new Intro(renderer, window, main_menu);
     auto fps_hud = new FPSHUD(renderer, window);
@@ -174,6 +176,8 @@ int main(int argc, char *argv[])
                 game_over->render();
                 break;
             case State::PAUSE:
+                pause->handle_event(event);
+                pause->render();
                 break;
             case State::SETTINGS:
                 break;

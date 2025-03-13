@@ -77,10 +77,10 @@ public:
         dst_screen->render();
         SDL_SetRenderTarget(renderer, NULL);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
         SDL_SetTextureAlphaMod(src_screen_as_texture, 255 - opacity);
-        SDL_RenderCopy(renderer, src_screen_as_texture, NULL, NULL);
         SDL_SetTextureAlphaMod(dst_screen_as_texture, opacity);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, src_screen_as_texture, NULL, NULL);
         SDL_RenderCopy(renderer, dst_screen_as_texture, NULL, NULL);
     }
     ~Transition()
