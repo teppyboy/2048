@@ -237,6 +237,9 @@ public:
         }
         else
         {
+            Uint8 opacity;
+            SDL_GetTextureAlphaMod(game_screen_as_texture, &opacity);
+            SDL_LogVerbose(0, "Back screen opacity: %d", opacity);
             render_final();
         }
     }

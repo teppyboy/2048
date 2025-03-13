@@ -78,7 +78,7 @@ public:
             avg_frametime = 0;
         }
         prev_tick = current_tick;
-        if (fps_tex_rect.w < 0)
+        if (fps_tex_rect.w < 0 || fps_tex_rect.h < 0)
         {
             return;
         }
