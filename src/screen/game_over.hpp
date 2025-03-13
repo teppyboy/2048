@@ -24,8 +24,6 @@ class GameOver : public Screen
     SDL_Rect score_text_rect;
     SDL_Rect best_score_rect;
     SDL_Rect best_score_text_rect;
-    SDL_Texture *score_text_texture;
-    SDL_Texture *best_score_text_texture;
     SDL_Texture *game_screen_as_texture;
     SDL_Texture *our_screen_as_texture;
     // Screens
@@ -34,74 +32,6 @@ class GameOver : public Screen
     Uint64 start_time;
 
 private:
-    void init_scoreboard()
-    {
-        // Score
-        score_rect = {
-            1280 / 2 - 220 / 2,
-            270,
-            220,
-            80,
-        };
-        SDL_Surface *text_surface = TTF_RenderUTF8_Blended(UI_FONT_24, "YOUR SCORE", TILE_TEXT_LIGHT_RGB);
-        score_text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-        TTF_SizeUTF8(UI_FONT_24, "YOUR SCORE", &text_surface->w, &text_surface->h);
-        score_text_rect = {
-            score_rect.x + score_rect.w / 2 - text_surface->w / 2,
-            score_rect.y + 6,
-            text_surface->w,
-            text_surface->h,
-        };
-        // Best score
-        best_score_rect = {
-            1280 / 2 - 220 / 2,
-            270 + 80 + 20,
-            220,
-            80,
-        };
-        text_surface = TTF_RenderUTF8_Blended(UI_FONT_24, "BEST SCORE", TILE_TEXT_LIGHT_RGB);
-        best_score_text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-        TTF_SizeUTF8(UI_FONT_24, "BEST SCORE", &text_surface->w, &text_surface->h);
-        best_score_text_rect = {
-            best_score_rect.x + best_score_rect.w / 2 - text_surface->w / 2,
-            best_score_rect.y + 6,
-            text_surface->w,
-            text_surface->h,
-        };
-    }
-    void render_scoreboard()
-    {
-        // The "SCORE" text
-        SDL_RenderCopy(renderer, score_text_texture, NULL, &score_text_rect);
-        // The "BEST" text
-        SDL_RenderCopy(renderer, best_score_text_texture, NULL, &best_score_text_rect);
-        // The score
-        SDL_Surface *score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(game->board.score).c_str(), TILE_TEXT_LIGHT_RGB);
-        SDL_Texture *score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
-        TTF_SizeUTF8(UI_FONT_BOLD_32, std::to_string(game_best_score).c_str(), &score_surface->w, &score_surface->h);
-        SDL_Rect score_text_rect = {
-            score_rect.x + score_rect.w / 2 - score_surface->w / 2,
-            score_rect.y + 36,
-            score_surface->w,
-            score_surface->h,
-        };
-        // The best score
-        SDL_Surface *best_score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(game_best_score).c_str(), TILE_TEXT_LIGHT_RGB);
-        SDL_Texture *best_score_texture = SDL_CreateTextureFromSurface(renderer, best_score_surface);
-        TTF_SizeUTF8(UI_FONT_BOLD_32, std::to_string(game_best_score).c_str(), &best_score_surface->w, &best_score_surface->h);
-        SDL_Rect best_score_text_rect = {
-            best_score_rect.x + best_score_rect.w / 2 - best_score_surface->w / 2,
-            best_score_rect.y + 36,
-            best_score_surface->w,
-            best_score_surface->h,
-        };
-        SDL_RenderCopy(renderer, score_texture, NULL, &score_text_rect);
-        SDL_RenderCopy(renderer, best_score_texture, NULL, &best_score_text_rect);
-        SDL_DestroyTexture(score_texture);
-        SDL_DestroyTexture(best_score_texture);
-        SDL_FreeSurface(score_surface);
-        SDL_FreeSurface(best_score_surface);
-    }
     void render_animation_step_1()
     {
         game->render();
@@ -172,7 +102,9 @@ private:
     }
 
 public:
-    GameOver(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu* main_menu)
+    SDL_Texture *score_text_texture;
+    SDL_Texture *best_score_text_texture;
+    GameOver(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu *main_menu)
     {
         this->renderer = renderer;
         this->window = window;
@@ -193,7 +125,7 @@ public:
                                        { play_again_button_callback(); });
         main_menu_button = new Button(renderer, window, "MAIN MENU", 1280 / 2 - 300 / 2 + 320, 640, 300, 60, [&]()
                                       { main_menu_button_callback(); });
-        save_button = new Button(renderer, window, "SAVE GAME", 1280 / 2 - 300 / 2 - 320 , 640, 300, 60, [&]()
+        save_button = new Button(renderer, window, "SAVE GAME", 1280 / 2 - 300 / 2 - 320, 640, 300, 60, [&]()
                                  { save_button_callback(); });
         game_screen_as_texture = SDL_CreateTexture(
             renderer,
@@ -206,6 +138,76 @@ public:
             SDL_TEXTUREACCESS_TARGET,
             DEFAULT_WIDTH, DEFAULT_HEIGHT);
         SDL_SetTextureBlendMode(game_screen_as_texture, SDL_BLENDMODE_BLEND);
+    }
+    void init_scoreboard()
+    {
+        // Score
+        score_rect = {
+            1280 / 2 - 220 / 2,
+            270,
+            220,
+            80,
+        };
+        SDL_Surface *text_surface = TTF_RenderUTF8_Blended(UI_FONT_24, "YOUR SCORE", TILE_TEXT_LIGHT_RGB);
+        score_text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        TTF_SizeUTF8(UI_FONT_24, "YOUR SCORE", &text_surface->w, &text_surface->h);
+        score_text_rect = {
+            score_rect.x + score_rect.w / 2 - text_surface->w / 2,
+            score_rect.y + 6,
+            text_surface->w,
+            text_surface->h,
+        };
+        // Best score
+        best_score_rect = {
+            1280 / 2 - 220 / 2,
+            270 + 80 + 20,
+            220,
+            80,
+        };
+        text_surface = TTF_RenderUTF8_Blended(UI_FONT_24, "BEST SCORE", TILE_TEXT_LIGHT_RGB);
+        best_score_text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        TTF_SizeUTF8(UI_FONT_24, "BEST SCORE", &text_surface->w, &text_surface->h);
+        best_score_text_rect = {
+            best_score_rect.x + best_score_rect.w / 2 - text_surface->w / 2,
+            best_score_rect.y + 6,
+            text_surface->w,
+            text_surface->h,
+        };
+    }
+    void render_scoreboard()
+    {
+        // The "SCORE" text
+        SDL_RenderCopy(renderer, score_text_texture, NULL, &score_text_rect);
+        // The "BEST" text
+        SDL_RenderCopy(renderer, best_score_text_texture, NULL, &best_score_text_rect);
+        // The score
+        auto score_c_str = std::to_string(game->board.score).c_str();
+        auto best_score_c_str = std::to_string(game_best_score).c_str();
+        SDL_Surface *score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, score_c_str, TILE_TEXT_LIGHT_RGB);
+        SDL_Texture *score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
+        TTF_SizeUTF8(UI_FONT_BOLD_32, score_c_str, &score_surface->w, &score_surface->h);
+        SDL_Rect score_text_rect = {
+            score_rect.x + score_rect.w / 2 - score_surface->w / 2,
+            score_rect.y + 36,
+            score_surface->w,
+            score_surface->h,
+        };
+        // The best score
+        SDL_Surface *best_score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, best_score_c_str, TILE_TEXT_LIGHT_RGB);
+        SDL_Texture *best_score_texture = SDL_CreateTextureFromSurface(renderer, best_score_surface);
+        TTF_SizeUTF8(UI_FONT_BOLD_32, best_score_c_str, &best_score_surface->w, &best_score_surface->h);
+        SDL_Rect best_score_text_rect = {
+            best_score_rect.x + best_score_rect.w / 2 - best_score_surface->w / 2,
+            best_score_rect.y + 36,
+            best_score_surface->w,
+            best_score_surface->h,
+        };
+        SDL_RenderCopy(renderer, score_texture, NULL, &score_text_rect);
+        SDL_RenderCopy(renderer, best_score_texture, NULL, &best_score_text_rect);
+        SDL_DestroyTexture(score_texture);
+        SDL_DestroyTexture(best_score_texture);
+        SDL_FreeSurface(score_surface);
+        SDL_FreeSurface(best_score_surface);
     }
     void start()
     {

@@ -3,6 +3,7 @@
 
 #include "constants.hpp"
 #include "screen/screen.hpp"
+
 State game_state = State::INTRO;
 bool init_game_over = false;
 bool init_game_win = false;

@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     auto main_menu = new MainMenu(renderer, window, game);
     auto game_over = new GameOver(renderer, window, game, main_menu);
     auto pause = new Pause(renderer, window, game, main_menu);
-    auto win = new Win(renderer, window, game);
+    auto win = new Win(renderer, window, game, game_over);
     auto intro = new Intro(renderer, window, main_menu);
     auto fps_hud = new FPSHUD(renderer, window);
     Transition *transition = nullptr;
