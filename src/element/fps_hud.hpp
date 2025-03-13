@@ -26,6 +26,7 @@ public:
         this->renderer = renderer;
         this->window = window;
         request_redraw_fps = true;
+        fps_text = std::string("FPS: ??");
         prev_tick = 1;
         last_draw_fps = 1;
         fps_tex_rect.y = 4;
@@ -41,9 +42,16 @@ public:
         // Render current FPS to screen
         auto time_elapsed = current_tick - last_draw_fps;
         auto tick_time = current_tick - prev_tick;
-        if (avg_frametime == 0) {
+        if (tick_time == 0)
+        {
+            tick_time = 1;
+        }
+        if (avg_frametime == 0)
+        {
             avg_frametime = tick_time;
-        } else {
+        }
+        else
+        {
             avg_frametime = (avg_frametime + tick_time) / 2;
         }
         // SDL_LogVerbose(0, "FPS time: %lld", time_elapsed);
@@ -63,7 +71,8 @@ public:
             SDL_GetWindowSizeInPixels(window, &fps_tex_rect.x, NULL);
             fps_tex_rect.w = sf_text_fps->w; // controls the width of the rect
             fps_tex_rect.x -= fps_tex_rect.w + 4;
-            if (fps_tex_rect.h == -1) {
+            if (fps_tex_rect.h == -1)
+            {
                 fps_tex_rect.h = sf_text_fps->h;
             }
             avg_frametime = 0;
