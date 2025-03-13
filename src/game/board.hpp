@@ -127,6 +127,11 @@ private:
                     result.moved = true;
                     // add score
                     score += grid[row][target_col - 1];
+                    // Set won flag
+                    if (grid[row][target_col - 1] == 2048)
+                    {
+                        won = true;
+                    }
                 }
                 // If the tile moved but didn't merge, record the move
                 else if (target_col != col)

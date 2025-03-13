@@ -16,12 +16,12 @@ class Game : public Screen
     SDL_Texture *bg_texture;
     // Board
     SDL_Rect board_rect;
-    Board board;
     int tile_size;
     Board::MoveResult move_result;
     Uint64 animation_start_time;
     Uint64 current_tick;
     std::pair<int, int> last_new_tile_pos;
+    bool is_game_over;
     // Score
     SDL_Rect score_rect;
     SDL_Rect score_text_rect;
@@ -29,6 +29,7 @@ class Game : public Screen
     SDL_Rect best_score_rect;
     SDL_Rect best_score_text_rect;
     SDL_Texture *best_score_text_texture;
+
 private:
     void _render()
     {
@@ -70,6 +71,7 @@ private:
     }
 
 public:
+    Board board;
     Game(SDL_Renderer *renderer, SDL_Window *window)
     {
         this->renderer = renderer;
@@ -90,6 +92,7 @@ public:
         move_result = Board::MoveResult();
         move_result.moved = true;
         board = Board(4);
+        is_game_over = false;
         screen_as_texture = SDL_CreateTexture(
             renderer,
             SDL_PIXELFORMAT_RGBA8888,
@@ -130,8 +133,22 @@ public:
             text_surface->h,
         };
     }
+    void reset()
+    {
+        board.reset();
+        is_game_over = false;
+        last_new_tile_pos = {-1, -1};
+        animation_start_time = 0;
+        current_tick = SDL_GetTicks64();
+        move_result = Board::MoveResult();
+        move_result.moved = true;
+    }
     int handle_event(SDL_Event event)
     {
+        if (is_game_over)
+        {
+            return 0;
+        }
         auto time_elapsed = current_tick - animation_start_time;
         if (time_elapsed < 100)
         {
@@ -139,6 +156,8 @@ public:
         }
         if (event.type == SDL_KEYDOWN)
         {
+            init_game_over = true;
+            game_state = State::GAME_OVER;
             auto old_grid = board.grid;
             switch (event.key.keysym.sym)
             {
@@ -157,21 +176,32 @@ public:
             default:
                 return 0;
             }
-            for (const auto &move : move_result.moved_tiles)
-            {
-                SDL_LogVerbose(0, "Tile %d moved from (%d,%d) to (%d,%d)\n",
-                               move.value, move.from_row, move.from_col, move.to_row, move.to_col);
-            }
-            for (const auto &merge : move_result.merged_tiles)
-            {
-                SDL_LogVerbose(0, "Tiles at (%d,%d) and (%d,%d) merged at (%d,%d) to form %d\n",
-                               merge.from_row_1, merge.from_col_1, merge.from_row_2, merge.from_col_2,
-                               merge.to_row, merge.to_col, merge.valueResult);
-            }
             if (move_result.moved)
             {
+                for (const auto &move : move_result.moved_tiles)
+                {
+                    SDL_LogVerbose(0, "Tile %d moved from (%d,%d) to (%d,%d)\n",
+                                   move.value, move.from_row, move.from_col, move.to_row, move.to_col);
+                }
+                for (const auto &merge : move_result.merged_tiles)
+                {
+                    SDL_LogVerbose(0, "Tiles at (%d,%d) and (%d,%d) merged at (%d,%d) to form %d\n",
+                                   merge.from_row_1, merge.from_col_1, merge.from_row_2, merge.from_col_2,
+                                   merge.to_row, merge.to_col, merge.valueResult);
+                }
                 last_new_tile_pos = board.add_tile();
                 animation_start_time = current_tick;
+            }
+            else
+            {
+                is_game_over = board.is_game_over();
+                if (is_game_over)
+                {
+                    SDL_LogVerbose(0, "Game over.");
+                    game_score = board.score;
+                    init_game_over = true;
+                    game_state = State::GAME_OVER;
+                }
             }
         }
         return 0;
@@ -186,14 +216,34 @@ public:
         // Render the tile
         SDL_LogVerbose(0, "Rendering tile at %d, %d with value %d scale %f", x, y, value, scale);
         int index = TILE_VALUE_INDEX_MAP[value];
-        // + 60 because of the border
+        auto it = TILE_VALUE_INDEX_MAP.find(value);
+        bool free_needed = false;
+        SDL_Surface *text_surface;
+        SDL_Texture *text_texture;
+        SDL_Texture *tile_texture;
+        if (it != TILE_VALUE_INDEX_MAP.end())
+        {
+            int index = it->second;
+            text_surface = TILE_TEXT_SURFACES[index];
+            text_texture = TILE_TEXT_TEXTURES[index];
+            tile_texture = TILE_TEXTURES[index];
+        }
+        else
+        {
+            free_needed = true;
+            text_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(value).c_str(), TILE_TEXT_DARK_RGB);
+            text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+            tile_texture = TILE_BIG_TEXTURE;
+            TILE_TEXT_SURFACES.push_back(text_surface);
+            TILE_TEXT_TEXTURES.push_back(text_texture);
+            TILE_TEXTURES.push_back(tile_texture);
+            TILE_VALUE_INDEX_MAP.emplace(value, TILE_TEXT_TEXTURES.size() - 1);
+        }
         auto size = (int)((double)tile_size * scale) + (int)((double)(tile_size / 2) * ((double)1 - scale));
         SDL_Rect tile_rect = {x, y, size, size};
         SDL_LogVerbose(0, "Tile rect: %d, %d, %d, %d", tile_rect.x, tile_rect.y, tile_rect.w, tile_rect.h);
         SDL_LogVerbose(0, "Tile texture: %d", index);
-        auto text_surface = TILE_TEXT_SURFACES[index];
-        auto text_texture = TILE_TEXT_TEXTURES[index];
-        SDL_RenderCopy(renderer, TILE_TEXTURES[index], NULL, &tile_rect);
+        SDL_RenderCopy(renderer, tile_texture, NULL, &tile_rect);
         if (scale == 1)
         {
             SDL_Rect text_rect = {
@@ -212,6 +262,7 @@ public:
     /// @param scale
     void render_tile(int x, int y, int value, double scale = 1)
     {
+        // + 60 because of the border
         render_tile_free(board_rect.x + 60 / 4 + 60 / 4 * x + x * tile_size, board_rect.y + 60 / 4 + 60 / 4 * y + y * tile_size, value, scale);
     }
     void animation_render_new_tile()
@@ -323,7 +374,8 @@ public:
             move_result.merged_tiles.clear();
         }
     }
-    void render_scoreboard() {
+    void render_scoreboard()
+    {
         // The rectangle
         // Score
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 30);

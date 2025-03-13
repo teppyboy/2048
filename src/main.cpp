@@ -10,6 +10,7 @@
 #include "element/fps_hud.hpp"
 #include "screen/main_menu.hpp"
 #include "screen/game.hpp"
+#include "screen/game_over.hpp"
 #include "screen/intro.hpp"
 #include "animation/transition.hpp"
 
@@ -109,7 +110,7 @@ int main(int argc, char *argv[])
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Failed to initialize SDL, check the console for more information.", window);
         return 1;
     }
-    
+
     if (!load_assets(renderer))
     {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Failed to load assets, check the console for more information.", window);
@@ -120,6 +121,7 @@ int main(int argc, char *argv[])
     auto game = new Game(renderer, window);
     SDL_LogVerbose(0, "Game object created.");
     auto main_menu = new MainMenu(renderer, window, game);
+    auto game_over = new GameOver(renderer, window, game, main_menu);
     auto intro = new Intro(renderer, window, main_menu);
     auto fps_hud = new FPSHUD(renderer, window);
     Transition *transition = nullptr;
@@ -166,6 +168,8 @@ int main(int argc, char *argv[])
                 game->render();
                 break;
             case State::GAME_OVER:
+                game_over->handle_event(event);
+                game_over->render();
                 break;
             case State::PAUSE:
                 break;
@@ -185,6 +189,7 @@ int main(int argc, char *argv[])
     // Cleanup
     delete main_menu;
     delete fps_hud;
+    delete game_over;
     delete game;
     delete intro;
     destroy_assets();
