@@ -4,6 +4,7 @@
 #include "screen.hpp"
 #include "game.hpp"
 #include "main_menu.hpp"
+#include "saves.hpp"
 #include "../constants.hpp"
 #include "../element/button.hpp"
 #include "../state.hpp"
@@ -30,7 +31,7 @@ class GameOver : public Screen
     Game *game;
     MainMenu *main_menu;
     Uint64 start_time;
-
+    Saves *saves;
 private:
     void render_animation_step_1()
     {
@@ -94,22 +95,24 @@ private:
     void main_menu_button_callback()
     {
         game->reset();
-        transition_set(this, main_menu, 1000, State::MAIN_MENU);
+        transition_set(this, main_menu, 500, State::MAIN_MENU);
     }
     void save_button_callback()
     {
-        transition_set(this, game, 1000, State::GAME);
+        set_prev(this, State::GAME_OVER);
+        transition_set(this, saves, 500, State::SAVES);
     }
 
 public:
     SDL_Texture *score_text_texture;
     SDL_Texture *best_score_text_texture;
-    GameOver(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu *main_menu)
+    GameOver(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu *main_menu, Saves *saves)
     {
         this->renderer = renderer;
         this->window = window;
         this->game = game;
         this->main_menu = main_menu;
+        this->saves = saves;
         first_final = true;
         start_time = 0;
         game_over_logo = IMG_LoadTexture(renderer, "assets/img/game_over.png");
@@ -125,7 +128,7 @@ public:
                                        { play_again_button_callback(); });
         main_menu_button = new Button(renderer, window, "MAIN MENU", 1280 / 2 - 300 / 2 + 320, 640, 300, 60, [&]()
                                       { main_menu_button_callback(); });
-        save_button = new Button(renderer, window, "SAVE GAME", 1280 / 2 - 300 / 2 - 320, 640, 300, 60, [&]()
+        save_button = new Button(renderer, window, "LOAD / SAVE", 1280 / 2 - 300 / 2 - 320, 640, 300, 60, [&]()
                                  { save_button_callback(); });
         game_screen_as_texture = SDL_CreateTexture(
             renderer,

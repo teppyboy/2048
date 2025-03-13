@@ -19,7 +19,7 @@ class Button : public Screen
     SDL_Rect btn_left_rect;
     SDL_Rect btn_right_rect;
     SDL_Rect btn_mid_rect;
-    
+
     // The dark magic thing.
     std::function<void()> callback;
 
@@ -88,7 +88,91 @@ public:
             {
                 is_hovered = true;
             }
-        } else {
+        }
+        else
+        {
+            is_hovered = false;
+        }
+        return 0;
+    }
+    void destroy()
+    {
+        SDL_DestroyTexture(text_texture);
+    }
+};
+
+class RectangleButton : public Screen
+{
+    std::string text;
+    bool is_hovered;
+    SDL_Texture *text_texture;
+    SDL_Renderer *renderer;
+    SDL_Window *window;
+    SDL_Rect text_rect;
+    SDL_Rect btn_rect;
+
+    // The dark magic thing.
+    std::function<void()> callback;
+
+public:
+    /// @brief Creates a new button.
+    /// You'll have to calculate the width and height of the button yourself.
+    /// @param renderer: The SDL renderer
+    /// @param window: The SDL window
+    /// @param text: The button content
+    /// @param x: The x position
+    /// @param y: The y position
+    /// @param w: The width
+    /// @param h: The height
+    /// @param callback: The callback function
+    RectangleButton(SDL_Renderer *renderer, SDL_Window *window, std::string text, int x, int y, int w, int h, std::function<void()> callback)
+    {
+        this->text = text;
+        this->renderer = renderer;
+        this->window = window;
+        this->callback = callback;
+        btn_rect = {x, y, w, h};
+        SDL_Surface *text_surface = TTF_RenderUTF8_Blended(UI_FONT_24, text.c_str(), TILE_TEXT_LIGHT_RGB);
+        text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        TTF_SizeUTF8(UI_FONT_24, text.c_str(), &text_surface->w, &text_surface->h);
+        text_rect.x = x + w / 2 - text_surface->w / 2;
+        text_rect.y = y + h / 2 - text_surface->h / 2;
+        text_rect.w = text_surface->w;
+        text_rect.h = text_surface->h;
+        SDL_FreeSurface(text_surface);
+    }
+    void render()
+    {
+        if (is_hovered)
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 40);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 120);
+        }
+        SDL_RenderFillRect(renderer, &btn_rect);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 80);
+        SDL_RenderDrawRect(renderer, &btn_rect);
+        SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
+    }
+    int handle_event(SDL_Event event)
+    {
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        if (x >= btn_rect.x && x <= btn_rect.x + btn_rect.w && y >= btn_rect.y && y <= btn_rect.y + btn_rect.h)
+        {
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                callback();
+            }
+            else
+            {
+                is_hovered = true;
+            }
+        }
+        else
+        {
             is_hovered = false;
         }
         return 0;

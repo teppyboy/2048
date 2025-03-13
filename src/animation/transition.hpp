@@ -19,7 +19,6 @@ class Transition : public Screen
     Screen *dst_screen;
     Uint64 start_time;
     int duration_ms;
-    // Board
 public:
     Transition(SDL_Renderer *renderer, SDL_Window *window, Screen *src_screen, Screen *dst_screen, int duration_ms)
     {
