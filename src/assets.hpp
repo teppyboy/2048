@@ -32,7 +32,7 @@ int load_assets(SDL_Renderer *renderer)
 {
     DEBUG_FONT = TTF_OpenFont("assets/fonts/Jetbrains-Mono.ttf", 12);
     UI_FONT_24 = TTF_OpenFont("assets/fonts/Rubik-Light.ttf", 24);
-    UI_FONT_BOLD_32 = TTF_OpenFont("assets/fonts/Rubik-Medium.ttf", 32);
+    UI_FONT_BOLD_32 = TTF_OpenFont("assets/fonts/Rubik-Regular.ttf", 32);
     GAME_FONT_48 = TTF_OpenFont("assets/fonts/Rubik-Medium.ttf", 48);
     BTN_MID_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/middle.png");
     BTN_LEFT_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/left.png");
