@@ -4,10 +4,7 @@
 #include "screen.hpp"
 #include "main_menu.hpp"
 #include "../constants.hpp"
-#include "../element/button.hpp"
 #include "../state.hpp"
-
-#define INTRO_DURATION 1000
 
 class Intro : public Screen
 {
@@ -15,7 +12,7 @@ class Intro : public Screen
     SDL_Window *window;
     Screen *main_menu;
     Uint64 start_time;
-    // Board
+
 public:
     Intro(SDL_Renderer *renderer, SDL_Window *window, Screen *main_menu)
     {
