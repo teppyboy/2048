@@ -3,13 +3,14 @@
 
 #include "constants.hpp"
 #include "screen/screen.hpp"
+#include "struct.hpp"
 
 State game_state = State::INTRO;
+Settings settings = Settings::load();
+UserData user_data = UserData::load();
 bool init_game_over = false;
 bool init_game_win = false;
 bool init_game_pause = false;
-int game_best_score = 0;
-int game_score = 0;
 
 // Transition mess
 bool transition_request;
@@ -31,8 +32,3 @@ void transition_set(Screen *src, Screen *dst, int duration, State end_state) {
     transition_to = end_state;
     transition_request = true;
 }
-#ifdef DEBUG
-bool fps_hud_enabled = true;
-#else
-bool fps_hud_enabled = false;
-#endif

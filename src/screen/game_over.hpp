@@ -70,7 +70,7 @@ private:
         SDL_SetTextureAlphaMod(score_text_texture, 255);
         SDL_SetTextureAlphaMod(best_score_text_texture, 255);
         SDL_RenderCopy(renderer, game_screen_as_texture, NULL, NULL);
-        SDL_LogVerbose(0, "Rendering our screen with opacity %d", opacity);
+        SDL_LogVerbose(0, "Rendering our screen with opacity %lld", opacity);
         SDL_RenderCopy(renderer, game_over_logo, NULL, &game_over_logo_rect);
         render_scoreboard();
         play_again_button->render();
@@ -182,7 +182,7 @@ public:
         SDL_RenderCopy(renderer, best_score_text_texture, NULL, &best_score_text_rect);
         // The score
         auto score_c_str = std::to_string(game->board.score).c_str();
-        auto best_score_c_str = std::to_string(game_best_score).c_str();
+        auto best_score_c_str = std::to_string(user_data.best_score).c_str();
         SDL_Surface *score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, score_c_str, TILE_TEXT_LIGHT_RGB);
         SDL_Texture *score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
         TTF_SizeUTF8(UI_FONT_BOLD_32, score_c_str, &score_surface->w, &score_surface->h);

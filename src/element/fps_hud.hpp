@@ -26,6 +26,8 @@ public:
         this->renderer = renderer;
         this->window = window;
         request_redraw_fps = true;
+        fps_tex = nullptr;
+        sf_text_fps = nullptr;
         fps_text = std::string("FPS: ??");
         prev_tick = 1;
         last_draw_fps = 1;

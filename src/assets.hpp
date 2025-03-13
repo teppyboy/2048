@@ -6,7 +6,7 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
-TTF_Font *DEBUG_FONT, *UI_FONT_BOLD_32, *GAME_FONT_48, *UI_FONT_24;
+TTF_Font *DEBUG_FONT, *UI_FONT_BOLD_32, *GAME_FONT_48, *GAME_FONT_46, *UI_FONT_24;
 // Button
 SDL_Texture *BTN_LEFT_TEXTURE, *BTN_RIGHT_TEXTURE, *BTN_MID_TEXTURE, *BTN_LEFT_HOVER_TEXTURE, *BTN_RIGHT_HOVER_TEXTURE, *BTN_MID_HOVER_TEXTURE;
 // Game
@@ -34,6 +34,7 @@ int load_assets(SDL_Renderer *renderer)
     UI_FONT_24 = TTF_OpenFont("assets/fonts/Rubik-Light.ttf", 24);
     UI_FONT_BOLD_32 = TTF_OpenFont("assets/fonts/Rubik-Regular.ttf", 32);
     GAME_FONT_48 = TTF_OpenFont("assets/fonts/Rubik-Medium.ttf", 48);
+    GAME_FONT_46 = TTF_OpenFont("assets/fonts/Rubik-Medium.ttf", 48);
     BTN_MID_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/middle.png");
     BTN_LEFT_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/left.png");
     BTN_RIGHT_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/right.png");
@@ -42,16 +43,28 @@ int load_assets(SDL_Renderer *renderer)
     BTN_RIGHT_HOVER_TEXTURE = IMG_LoadTexture(renderer, "assets/img/button/right_hover.png");
     // Game part
     BOARD_TEXTURE = IMG_LoadTexture(renderer, "assets/img/board.png");
-    for (int i = 2; i <= 2048; i *= 2) {
+    for (int i = 2; i <= 2048; i *= 2)
+    {
         std::string path = "assets/img/tile_" + std::to_string(i) + ".png";
         TILE_TEXTURES.push_back(IMG_LoadTexture(renderer, path.c_str()));
         auto target_color = TILE_TEXT_DARK_RGB;
-        if (i > 4) {
+        if (i > 4)
+        {
             target_color = TILE_TEXT_LIGHT_RGB;
         }
-        auto text = std::to_string(i).c_str();
-        auto text_surface = TTF_RenderUTF8_Blended(GAME_FONT_48, text, target_color);
-        TTF_SizeUTF8(GAME_FONT_48, text, &text_surface->w, &text_surface->h);
+        auto text_str = std::to_string(i);
+        auto text = text_str.c_str();
+        SDL_Surface *text_surface;
+        if (i < 1024)
+        {
+            text_surface = TTF_RenderUTF8_Blended(GAME_FONT_48, text, target_color);
+            TTF_SizeUTF8(GAME_FONT_48, text, &text_surface->w, &text_surface->h);
+        }
+        else
+        {
+            text_surface = TTF_RenderUTF8_Blended(GAME_FONT_46, text, target_color);
+            TTF_SizeUTF8(GAME_FONT_46, text, &text_surface->w, &text_surface->h);
+        }
         TILE_TEXT_SURFACES.push_back(text_surface);
         TILE_TEXT_TEXTURES.push_back(SDL_CreateTextureFromSurface(renderer, text_surface));
     }
@@ -64,7 +77,8 @@ int load_assets(SDL_Renderer *renderer)
     }
     return 1;
 }
-void destroy_assets() {
+void destroy_assets()
+{
     TTF_CloseFont(DEBUG_FONT);
     TTF_CloseFont(UI_FONT_24);
     TTF_CloseFont(UI_FONT_BOLD_32);
@@ -76,13 +90,16 @@ void destroy_assets() {
     SDL_DestroyTexture(BTN_RIGHT_HOVER_TEXTURE);
     SDL_DestroyTexture(BTN_MID_HOVER_TEXTURE);
     SDL_DestroyTexture(BOARD_TEXTURE);
-    for (auto texture : TILE_TEXTURES) {
+    for (auto texture : TILE_TEXTURES)
+    {
         SDL_DestroyTexture(texture);
     }
-    for (auto texture : TILE_TEXT_TEXTURES) {
+    for (auto texture : TILE_TEXT_TEXTURES)
+    {
         SDL_DestroyTexture(texture);
     }
-    for (auto surface : TILE_TEXT_SURFACES) {
+    for (auto surface : TILE_TEXT_SURFACES)
+    {
         SDL_FreeSurface(surface);
     }
     return;

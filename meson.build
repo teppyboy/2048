@@ -13,6 +13,7 @@ sdl2_dep = dependency('sdl2')
 sdl2_image_dep = dependency('sdl2_image')
 sdl2_ttf_dep = dependency('sdl2_ttf')
 sdl2_mixer_dep = dependency('sdl2_mixer')
+json = dependency('nlohmann_json')
 
 win_subsystem = 'console'
 
@@ -28,7 +29,7 @@ exe = executable(
   install: true,
   install_dir: meson.current_source_dir() + '/bin',
   win_subsystem: win_subsystem,
-  dependencies: [sdl2_main_dep, sdl2_dep, sdl2_image_dep, sdl2_ttf_dep, sdl2_mixer_dep],
+  dependencies: [sdl2_main_dep, sdl2_dep, sdl2_image_dep, sdl2_ttf_dep, sdl2_mixer_dep, json],
 )
 
 test('basic', exe)

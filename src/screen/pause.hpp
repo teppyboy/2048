@@ -65,7 +65,7 @@ private:
         // Set opacity
         SDL_SetTextureAlphaMod(game_over_logo, opacity);
         SDL_RenderCopy(renderer, game_screen_as_texture, NULL, NULL);
-        SDL_LogVerbose(0, "Rendering our screen with opacity %d", opacity);
+        SDL_LogVerbose(0, "Rendering our screen with opacity %lld", opacity);
         SDL_RenderCopy(renderer, game_over_logo, NULL, &game_over_logo_rect);
         play_again_button->render();
         continue_playing_button->render();

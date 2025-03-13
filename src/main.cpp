@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
             render_driver_index = i;
         }
     }
-    SDL_Window *window = SDL_CreateWindow(WINDOW_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_HIDDEN | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window *window = SDL_CreateWindow(WINDOW_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, settings.width, settings.height, SDL_WINDOW_HIDDEN | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, render_driver_index, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_Surface *surface;
     SDL_Event event;
@@ -189,23 +189,26 @@ int main(int argc, char *argv[])
                 break;
             }
         }
-        if (fps_hud_enabled)
+        if (settings.fps_hud)
         {
             fps_hud->render();
         }
         SDL_RenderPresent(renderer);
     }
-
+    // Save settings and userdata (so if we cleanup failed then we still save the data)
+    settings.save();
+    user_data.save();
     // Cleanup
     delete main_menu;
     delete fps_hud;
     delete game_over;
     delete game;
     delete intro;
+    delete pause;
+    delete win;
     destroy_assets();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     destroy_sdl();
-
     return 0;
 }
