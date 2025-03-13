@@ -15,6 +15,7 @@
 #include "screen/intro.hpp"
 #include "screen/pause.hpp"
 #include "screen/saves.hpp"
+#include "screen/settings.hpp"
 #include "screen/win.hpp"
 #include "animation/transition.hpp"
 
@@ -116,10 +117,11 @@ int main(int argc, char *argv[])
     auto fps_hud = new FPSHUD(renderer, window);
     auto game = new Game(renderer, window);
     auto saves = new Saves(renderer, window, game);
-    auto main_menu = new MainMenu(renderer, window, game, saves);
+    auto settings_screen = new SettingsScreen(renderer, window, game);
+    auto main_menu = new MainMenu(renderer, window, game, saves, settings_screen);
     auto intro = new Intro(renderer, window, main_menu);
     auto game_over = new GameOver(renderer, window, game, main_menu, saves);
-    auto pause = new Pause(renderer, window, game, main_menu, saves);
+    auto pause = new Pause(renderer, window, game, main_menu, saves, settings_screen);
     auto win = new Win(renderer, window, game, game_over, saves);
     Transition *transition = nullptr;
     SDL_ShowWindow(window);
@@ -178,8 +180,8 @@ int main(int argc, char *argv[])
                 pause->render();
                 break;
             case State::SETTINGS:
-                break;
-            case State::SHOW_MESSAGEBOX:
+                settings_screen->handle_event(event);
+                settings_screen->render();
                 break;
             case State::SAVES:
                 saves->handle_event(event);

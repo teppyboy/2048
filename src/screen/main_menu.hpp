@@ -22,13 +22,15 @@ class MainMenu : public Screen
     uint64_t last_tick;
     Screen *game;
     Screen *saves;
+    Screen *settings;
 public:
-    MainMenu(SDL_Renderer *renderer, SDL_Window *window, Screen *game, Screen *saves)
+    MainMenu(SDL_Renderer *renderer, SDL_Window *window, Screen *game, Screen *saves, Screen *settings)
     {
         this->renderer = renderer;
         this->window = window;
         this->game = game;
         this->saves = saves;
+        this->settings = settings;
         bg_texture = IMG_LoadTexture(renderer, "assets/img/bg_menu.png");
         last_tick = SDL_GetTicks64();
         logo_texture = IMG_LoadTexture(renderer, "assets/img/logo.png");
@@ -58,6 +60,8 @@ public:
     void settings_button_callback()
     {
         SDL_LogVerbose(0, "Settings button clicked.");
+        set_prev(this, State::MAIN_MENU);
+        transition_set(this, settings, 500, State::SETTINGS);
     }
     int handle_event(SDL_Event event)
     {

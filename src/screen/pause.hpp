@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include "screen.hpp"
 #include "saves.hpp"
+#include "settings.hpp"
 #include "main_menu.hpp"
 #include "game.hpp"
 #include "../constants.hpp"
@@ -29,6 +30,7 @@ class Pause : public Screen
     MainMenu *main_menu;
     Uint64 start_time;
     Saves *saves;
+    SettingsScreen *settings;
 
 private:
     void render_animation_step_1()
@@ -107,17 +109,19 @@ private:
     }
     void settings_button_callback()
     {
-        transition_set(this, game, 250, State::SETTINGS);
+        set_prev(this, State::PAUSE);
+        transition_set(this, settings, 500, State::SETTINGS);
     }
 
 public:
-    Pause(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu *main_menu, Saves *saves)
+    Pause(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu *main_menu, Saves *saves, SettingsScreen *settings)
     {
         this->renderer = renderer;
         this->window = window;
         this->game = game;
         this->main_menu = main_menu;
         this->saves = saves;
+        this->settings = settings;
         start_time = 0;
         pause_logo = IMG_LoadTexture(renderer, "assets/img/paused.png");
         SDL_SetTextureBlendMode(pause_logo, SDL_BLENDMODE_BLEND);
@@ -162,8 +166,6 @@ public:
         main_menu_button->handle_event(event);
         if (event.type == SDL_KEYDOWN)
         {
-            // init_game_win = true;
-            // game_state = State::WIN;
             switch (event.key.keysym.sym)
             {
             case SDLK_ESCAPE:
