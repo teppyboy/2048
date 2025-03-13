@@ -32,6 +32,7 @@ class GameOver : public Screen
     MainMenu *main_menu;
     Uint64 start_time;
     Saves *saves;
+
 private:
     void render_animation_step_1()
     {
@@ -90,7 +91,7 @@ private:
     void play_again_button_callback()
     {
         game->reset();
-        transition_set(this, game, 1000, State::GAME);
+        transition_set(this, game, 500, State::GAME);
     }
     void main_menu_button_callback()
     {

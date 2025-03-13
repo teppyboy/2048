@@ -89,7 +89,7 @@ private:
     void play_again_button_callback()
     {
         game->reset();
-        transition_set(this, game, 1000, State::PAUSE);
+        transition_set(this, game, 500, State::GAME);
     }
     void continue_playing_button_callback()
     {
