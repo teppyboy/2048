@@ -3,12 +3,11 @@
 #include <SDL_image.h>
 #include "screen.hpp"
 #include "game.hpp"
-#include "main_menu.hpp"
 #include "../constants.hpp"
 #include "../element/button.hpp"
 #include "../state.hpp"
 
-class GameOver : public Screen
+class Win : public Screen
 {
     SDL_Renderer *renderer;
     SDL_Window *window;
@@ -16,7 +15,7 @@ class GameOver : public Screen
     SDL_Rect game_over_logo_rect;
     // Button
     Button *play_again_button;
-    Button *main_menu_button;
+    Button *continue_playing_button;
     Button *save_button;
     // I'm sorry for my laziness
     bool first_final;
@@ -30,7 +29,6 @@ class GameOver : public Screen
     SDL_Texture *our_screen_as_texture;
     // Screens
     Game *game;
-    MainMenu *main_menu;
     Uint64 start_time;
 
 private:
@@ -144,7 +142,7 @@ private:
         SDL_RenderCopy(renderer, game_over_logo, NULL, &game_over_logo_rect);
         render_scoreboard();
         play_again_button->render();
-        main_menu_button->render();
+        continue_playing_button->render();
         save_button->render();
         SDL_SetRenderTarget(renderer, NULL);
         SDL_RenderCopy(renderer, our_screen_as_texture, NULL, NULL);
@@ -153,7 +151,7 @@ private:
     {
         SDL_RenderCopy(renderer, our_screen_as_texture, NULL, NULL);
         play_again_button->render();
-        main_menu_button->render();
+        continue_playing_button->render();
         save_button->render();
     }
     void play_again_button_callback()
@@ -161,10 +159,10 @@ private:
         game->reset();
         transition_set(this, game, 1000, State::GAME);
     }
-    void main_menu_button_callback()
+    void continue_playing_button_callback()
     {
-        game->reset();
-        transition_set(this, main_menu, 1000, State::MAIN_MENU);
+        game->continue_playing_after_win = true;
+        transition_set(this, game, 1000, State::GAME);
     }
     void save_button_callback()
     {
@@ -172,15 +170,14 @@ private:
     }
 
 public:
-    GameOver(SDL_Renderer *renderer, SDL_Window *window, Game *game, MainMenu* main_menu)
+    Win(SDL_Renderer *renderer, SDL_Window *window, Game *game)
     {
         this->renderer = renderer;
         this->window = window;
         this->game = game;
-        this->main_menu = main_menu;
         first_final = true;
         start_time = 0;
-        game_over_logo = IMG_LoadTexture(renderer, "assets/img/game_over.png");
+        game_over_logo = IMG_LoadTexture(renderer, "assets/img/win.png");
         SDL_SetTextureBlendMode(game_over_logo, SDL_BLENDMODE_BLEND);
         game_over_logo_rect = {
             1280 / 2 - 512 / 2,
@@ -189,11 +186,11 @@ public:
             512,
         };
         init_scoreboard();
-        play_again_button = new Button(renderer, window, "PLAY AGAIN", 1280 / 2 - 300 / 2, 640, 300, 60, [&]()
+        continue_playing_button = new Button(renderer, window, "CONTINUE", 1280 / 2 - 300 / 2, 640, 300, 60, [&]()
+                                             { continue_playing_button_callback(); });
+        play_again_button = new Button(renderer, window, "PLAY AGAIN", 1280 / 2 - 300 / 2 + 320, 640, 300, 60, [&]()
                                        { play_again_button_callback(); });
-        main_menu_button = new Button(renderer, window, "MAIN MENU", 1280 / 2 - 300 / 2 + 320, 640, 300, 60, [&]()
-                                      { main_menu_button_callback(); });
-        save_button = new Button(renderer, window, "SAVE GAME", 1280 / 2 - 300 / 2 - 320 , 640, 300, 60, [&]()
+        save_button = new Button(renderer, window, "SAVE GAME", 1280 / 2 - 300 / 2 - 320, 640, 300, 60, [&]()
                                  { save_button_callback(); });
         game_screen_as_texture = SDL_CreateTexture(
             renderer,
@@ -214,16 +211,16 @@ public:
     int handle_event(SDL_Event event)
     {
         play_again_button->handle_event(event);
-        main_menu_button->handle_event(event);
+        continue_playing_button->handle_event(event);
         save_button->handle_event(event);
         return 0;
     }
     void render()
     {
-        if (init_game_over)
+        if (init_game_win)
         {
             start();
-            init_game_over = false;
+            init_game_win = false;
         }
         auto time_elapsed = SDL_GetTicks64() - start_time;
         if (time_elapsed < 500)
@@ -243,13 +240,13 @@ public:
             render_final();
         }
     }
-    ~GameOver()
+    ~Win()
     {
         SDL_DestroyTexture(game_over_logo);
         SDL_DestroyTexture(game_screen_as_texture);
         SDL_DestroyTexture(our_screen_as_texture);
         delete play_again_button;
-        delete main_menu_button;
+        delete continue_playing_button;
         delete save_button;
         SDL_DestroyTexture(score_text_texture);
         SDL_DestroyTexture(best_score_text_texture);

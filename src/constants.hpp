@@ -22,4 +22,5 @@ enum class State
     SETTINGS,
     SHOW_MESSAGEBOX,
     NOTHING,
+    WIN,
 };

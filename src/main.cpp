@@ -12,6 +12,7 @@
 #include "screen/game.hpp"
 #include "screen/game_over.hpp"
 #include "screen/intro.hpp"
+#include "screen/win.hpp"
 #include "animation/transition.hpp"
 
 /**
@@ -122,6 +123,7 @@ int main(int argc, char *argv[])
     SDL_LogVerbose(0, "Game object created.");
     auto main_menu = new MainMenu(renderer, window, game);
     auto game_over = new GameOver(renderer, window, game, main_menu);
+    auto win = new Win(renderer, window, game);
     auto intro = new Intro(renderer, window, main_menu);
     auto fps_hud = new FPSHUD(renderer, window);
     Transition *transition = nullptr;
@@ -176,6 +178,10 @@ int main(int argc, char *argv[])
             case State::SETTINGS:
                 break;
             case State::SHOW_MESSAGEBOX:
+                break;
+            case State::WIN:
+                win->handle_event(event);
+                win->render();
                 break;
             }
         }

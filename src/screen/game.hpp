@@ -72,6 +72,7 @@ private:
 
 public:
     Board board;
+    bool continue_playing_after_win;
     Game(SDL_Renderer *renderer, SDL_Window *window)
     {
         this->renderer = renderer;
@@ -86,13 +87,8 @@ public:
             512,
         };
         tile_size = 437 / 4;
-        this->last_new_tile_pos = {-1, -1};
-        this->animation_start_time = 0;
-        this->current_tick = SDL_GetTicks64();
-        move_result = Board::MoveResult();
-        move_result.moved = true;
-        board = Board(4);
-        is_game_over = false;
+        current_tick = SDL_GetTicks64();
+        reset();
         screen_as_texture = SDL_CreateTexture(
             renderer,
             SDL_PIXELFORMAT_RGBA8888,
@@ -142,10 +138,15 @@ public:
         current_tick = SDL_GetTicks64();
         move_result = Board::MoveResult();
         move_result.moved = true;
+        continue_playing_after_win = false;
     }
     int handle_event(SDL_Event event)
     {
         if (is_game_over)
+        {
+            return 0;
+        }
+        if (board.won && !continue_playing_after_win)
         {
             return 0;
         }
@@ -156,9 +157,6 @@ public:
         }
         if (event.type == SDL_KEYDOWN)
         {
-            init_game_over = true;
-            game_state = State::GAME_OVER;
-            auto old_grid = board.grid;
             switch (event.key.keysym.sym)
             {
             case SDLK_w:
@@ -191,6 +189,12 @@ public:
                 }
                 last_new_tile_pos = board.add_tile();
                 animation_start_time = current_tick;
+                if (board.won && !continue_playing_after_win)
+                {
+                    SDL_LogVerbose(0, "You won!");
+                    init_game_win = true;
+                    game_state = State::WIN;
+                }
             }
             else
             {
@@ -198,7 +202,6 @@ public:
                 if (is_game_over)
                 {
                     SDL_LogVerbose(0, "Game over.");
-                    game_score = board.score;
                     init_game_over = true;
                     game_state = State::GAME_OVER;
                 }
