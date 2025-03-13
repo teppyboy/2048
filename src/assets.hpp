@@ -36,7 +36,7 @@ int load_assets(SDL_Renderer *renderer)
 {
     BGM = Mix_LoadMUS("assets/audio/bg.ogg");
     SWIPE_SFX = Mix_LoadWAV("assets/audio/swipe.wav");
-    DEBUG_FONT = TTF_OpenFont("assets/fonts/Jetbrains-Mono.ttf", 12);
+    DEBUG_FONT = TTF_OpenFont("assets/fonts/jetbrains-mono.ttf", 12);
     UI_FONT_24 = TTF_OpenFont("assets/fonts/Rubik-Light.ttf", 24);
     UI_FONT_BOLD_32 = TTF_OpenFont("assets/fonts/Rubik-Regular.ttf", 32);
     UI_FONT_YURUKA_40 = TTF_OpenFont("assets/fonts/FOT-Yuruka-STD.ttf", 40);
