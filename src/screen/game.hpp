@@ -182,6 +182,7 @@ public:
             }
             if (move_result.moved)
             {
+                Mix_PlayChannel(-1, SWIPE_SFX, 0);
                 for (const auto &move : move_result.moved_tiles)
                 {
                     SDL_LogVerbose(0, "Tile %d moved from (%d,%d) to (%d,%d)\n",
@@ -195,21 +196,21 @@ public:
                 }
                 last_new_tile_pos = board.add_tile();
                 animation_start_time = current_tick;
-                if (board.won && !continue_playing_after_win)
-                {
-                    SDL_LogVerbose(0, "You won!");
-                    init_game_win = true;
-                    game_state = State::WIN;
-                }
-            }
-            else
-            {
                 is_game_over = board.is_game_over();
                 if (is_game_over)
                 {
                     SDL_LogVerbose(0, "Game over.");
                     init_game_over = true;
                     game_state = State::GAME_OVER;
+                }
+                else
+                {
+                    if (board.won && !continue_playing_after_win)
+                    {
+                        SDL_LogVerbose(0, "You won!");
+                        init_game_win = true;
+                        game_state = State::WIN;
+                    }
                 }
             }
         }
