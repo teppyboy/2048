@@ -56,7 +56,7 @@ public:
         TTF_SizeUTF8(UI_FONT_YURUKA_40, "SAVE GAME", &save_game_text_surface->w, &save_game_text_surface->h);
         save_game_text_rect = {
             1280 / 2 - save_game_text_surface->w / 2,
-            20,
+            16,
             save_game_text_surface->w,
             save_game_text_surface->h,
         };
@@ -167,6 +167,8 @@ public:
                                                                     SDL_LogVerbose(0, "Load save button clicked.");
                                                                     game->board.grid = user_data.saves[i].grid;
                                                                     game->board.score = user_data.saves[i].score;
+                                                                    game->board.won = false;
+                                                                    game->move_result.moved = true;
                                                                     transition_set(this, game, 500, State::GAME); }));
             save_list_delete_buttons.push_back(new RectangleButton(renderer, window, "Delete", save_rect.x + save_rect.w - 10 - 60 - 110, save_rect.y + 10, 90, 40, [&, i]()
                                                                    {

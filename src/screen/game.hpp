@@ -17,7 +17,6 @@ class Game : public Screen
     // Board
     SDL_Rect board_rect;
     int tile_size;
-    Board::MoveResult move_result;
     Uint64 animation_start_time;
     Uint64 current_tick;
     std::pair<int, int> last_new_tile_pos;
@@ -72,6 +71,7 @@ private:
 
 public:
     Board board;
+    Board::MoveResult move_result;
     bool continue_playing_after_win;
     Game(SDL_Renderer *renderer, SDL_Window *window)
     {
