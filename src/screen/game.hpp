@@ -20,7 +20,6 @@ class Game : public Screen
     Uint64 animation_start_time;
     Uint64 current_tick;
     std::pair<int, int> last_new_tile_pos;
-    bool is_game_over;
     // Score
     SDL_Rect score_rect;
     SDL_Rect score_text_rect;
@@ -73,6 +72,7 @@ public:
     Board board;
     Board::MoveResult move_result;
     bool continue_playing_after_win;
+    bool is_game_over;
     Game(SDL_Renderer *renderer, SDL_Window *window)
     {
         this->renderer = renderer;
@@ -180,6 +180,14 @@ public:
             default:
                 return 0;
             }
+            is_game_over = board.is_game_over();
+            if (is_game_over)
+            {
+                SDL_LogVerbose(0, "Game over.");
+                init_game_over = true;
+                game_state = State::GAME_OVER;
+                return 0;
+            }
             if (move_result.moved)
             {
                 Mix_PlayChannel(-1, SWIPE_SFX, 0);
@@ -196,21 +204,11 @@ public:
                 }
                 last_new_tile_pos = board.add_tile();
                 animation_start_time = current_tick;
-                is_game_over = board.is_game_over();
-                if (is_game_over)
+                if (board.won && !continue_playing_after_win)
                 {
-                    SDL_LogVerbose(0, "Game over.");
-                    init_game_over = true;
-                    game_state = State::GAME_OVER;
-                }
-                else
-                {
-                    if (board.won && !continue_playing_after_win)
-                    {
-                        SDL_LogVerbose(0, "You won!");
-                        init_game_win = true;
-                        game_state = State::WIN;
-                    }
+                    SDL_LogVerbose(0, "You won!");
+                    init_game_win = true;
+                    game_state = State::WIN;
                 }
             }
         }

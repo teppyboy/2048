@@ -179,6 +179,7 @@ public:
                                                                     game->board.grid = user_data.saves[i].grid;
                                                                     game->board.score = user_data.saves[i].score;
                                                                     game->board.won = false;
+                                                                    game->is_game_over = false;
                                                                     game->move_result.moved = true;
                                                                     transition_set(this, game, 500, State::GAME); }));
             save_list_delete_buttons.push_back(new RectangleButton(renderer, window, "Delete", save_rect.x + save_rect.w - 10 - 60 - 110, save_rect.y + 10, 90, 40, [&, i]()
