@@ -11,6 +11,7 @@ TTF_Font *DEBUG_FONT, *UI_FONT_BOLD_32, *GAME_FONT_48, *UI_FONT_24;
 SDL_Texture *BTN_LEFT_TEXTURE, *BTN_RIGHT_TEXTURE, *BTN_MID_TEXTURE, *BTN_LEFT_HOVER_TEXTURE, *BTN_RIGHT_HOVER_TEXTURE, *BTN_MID_HOVER_TEXTURE;
 // Game
 std::vector<SDL_Texture *> TILE_TEXTURES;
+SDL_Texture *TILE_BIG_TEXTURE;
 std::vector<SDL_Texture *> TILE_TEXT_TEXTURES;
 std::vector<SDL_Surface *> TILE_TEXT_SURFACES;
 std::unordered_map<int, int> TILE_VALUE_INDEX_MAP = {
@@ -54,6 +55,7 @@ int load_assets(SDL_Renderer *renderer)
         TILE_TEXT_SURFACES.push_back(text_surface);
         TILE_TEXT_TEXTURES.push_back(SDL_CreateTextureFromSurface(renderer, text_surface));
     }
+    TILE_BIG_TEXTURE = IMG_LoadTexture(renderer, "assets/img/tile.png");
     // Verify assets
     if (DEBUG_FONT == nullptr || UI_FONT_BOLD_32 == nullptr || GAME_FONT_48 == nullptr || BTN_LEFT_TEXTURE == nullptr || BTN_RIGHT_TEXTURE == nullptr || BTN_MID_TEXTURE == nullptr || BTN_LEFT_HOVER_TEXTURE == nullptr || BTN_RIGHT_HOVER_TEXTURE == nullptr || BTN_MID_HOVER_TEXTURE == nullptr || BOARD_TEXTURE == nullptr)
     {
