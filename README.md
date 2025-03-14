@@ -38,6 +38,10 @@ The output will be in `./bin`
 
 ## Acknowledgements
 
+### BGM
++ Vexento - Lonely Dance: https://soundcloud.com/vexento/vexento-lonely-dance
+### SFX
++ Swipe: https://pixabay.com/vi/sound-effects/search/swipe/
 ### Fonts
 + Rubik: https://fonts.google.com/specimen/Rubik
 + JetBrains Mono: https://www.jetbrains.com/lp/mono/
