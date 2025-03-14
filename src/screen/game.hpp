@@ -249,7 +249,7 @@ public:
     {
         // Render the tile
         SDL_LogVerbose(0, "Rendering tile at %d, %d with value %d scale %f", x, y, value, scale);
-        int index = TILE_VALUE_INDEX_MAP[value];
+        int index = -1;
         auto it = TILE_VALUE_INDEX_MAP.find(value);
         bool free_needed = false;
         SDL_Surface *text_surface;
@@ -257,22 +257,24 @@ public:
         SDL_Texture *tile_texture;
         if (it != TILE_VALUE_INDEX_MAP.end())
         {
-            int index = it->second;
+            SDL_LogVerbose(0, "Using existing texture for value %d (index %d)", value, it->second);
+            index = it->second;
             text_surface = TILE_TEXT_SURFACES[index];
             text_texture = TILE_TEXT_TEXTURES[index];
             tile_texture = TILE_TEXTURES[index];
         }
         else
         {
+            SDL_LogVerbose(0, "Creating new texture for value %d", value);
             free_needed = true;
             std::string text = std::to_string(value);
-            text_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, text.c_str(), TILE_TEXT_DARK_RGB);
+            text_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, text.c_str(), TILE_TEXT_LIGHT_RGB);
             text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
             tile_texture = TILE_BIG_TEXTURE;
             TILE_TEXT_SURFACES.push_back(text_surface);
             TILE_TEXT_TEXTURES.push_back(text_texture);
             TILE_TEXTURES.push_back(tile_texture);
-            TILE_VALUE_INDEX_MAP.emplace(value, TILE_TEXT_TEXTURES.size() - 1);
+            TILE_VALUE_INDEX_MAP.emplace(value, TILE_VALUE_INDEX_MAP.size());
         }
         auto size = (int)((double)tile_size * scale) + (int)((double)(tile_size / 2) * ((double)1 - scale));
         SDL_Rect tile_rect = {x, y, size, size};
