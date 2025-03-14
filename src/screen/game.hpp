@@ -213,6 +213,10 @@ public:
             if (move_result.moved)
             {
                 Mix_PlayChannel(-1, SWIPE_SFX, 0);
+                if (board.score > user_data.best_score)
+                {
+                    user_data.best_score = board.score;
+                }
                 for (const auto &move : move_result.moved_tiles)
                 {
                     SDL_LogVerbose(0, "Tile %d moved from (%d,%d) to (%d,%d)\n",
@@ -434,10 +438,6 @@ public:
             score_surface->w,
             score_surface->h,
         };
-        if (board.score > user_data.best_score)
-        {
-            user_data.best_score = board.score;
-        }
         // The best score
         SDL_Surface *best_score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, best_score_str.c_str(), TILE_TEXT_DARK_RGB);
         SDL_Texture *best_score_texture = SDL_CreateTextureFromSurface(renderer, best_score_surface);
