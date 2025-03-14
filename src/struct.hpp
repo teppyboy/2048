@@ -9,13 +9,14 @@ public:
     int width, height;
     bool fps_hud;
     int sfx_volume, music_volume;
+    bool use_arrow_keys;
     static Settings default_settings()
     {
-        return Settings{DEFAULT_WIDTH, DEFAULT_HEIGHT, false, 100, 70};
+        return Settings{DEFAULT_WIDTH, DEFAULT_HEIGHT, false, 100, 70, true};
     }
     static Settings from_json(const nlohmann::json &j)
     {
-        return Settings{j.at("width").get<int>(), j.at("height").get<int>(), j.at("fps_hud").get<bool>(), j.at("sfx_volume").get<int>(), j.at("music_volume").get<int>()};
+        return Settings{j.at("width").get<int>(), j.at("height").get<int>(), j.at("fps_hud").get<bool>(), j.at("sfx_volume").get<int>(), j.at("music_volume").get<int>(), j.at("use_arrow_keys").get<bool>()};
     }
     static Settings load()
     {
@@ -30,7 +31,7 @@ public:
     }
     nlohmann::json to_json() const
     {
-        return nlohmann::json{{"width", width}, {"height", height}, {"fps_hud", fps_hud}, {"sfx_volume", sfx_volume}, {"music_volume", music_volume}};
+        return nlohmann::json{{"width", width}, {"height", height}, {"fps_hud", fps_hud}, {"sfx_volume", sfx_volume}, {"music_volume", music_volume}, {"use_arrow_keys", use_arrow_keys}};
     }
     void save() const
     {

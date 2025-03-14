@@ -157,8 +157,30 @@ public:
         }
         if (event.type == SDL_KEYDOWN)
         {
-            // init_game_win = true;
-            // game_state = State::WIN;
+            if (settings.use_arrow_keys)
+            {
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_UP:
+                    move_result = board.move(0); // Up
+                    break;
+                case SDLK_RIGHT:
+                    move_result = board.move(1); // Right
+                    break;
+                case SDLK_DOWN:
+                    move_result = board.move(2); // Down
+                    break;
+                case SDLK_LEFT:
+                    move_result = board.move(3); // Left
+                    break;
+                case SDLK_ESCAPE:
+                    init_game_pause = true;
+                    game_state = State::PAUSE;
+                    return 0;
+                default:
+                    break;
+                }
+            }
             switch (event.key.keysym.sym)
             {
             case SDLK_w:
@@ -178,7 +200,7 @@ public:
                 game_state = State::PAUSE;
                 return 0;
             default:
-                return 0;
+                break;
             }
             is_game_over = board.is_game_over();
             if (is_game_over)

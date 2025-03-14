@@ -12,6 +12,8 @@ This is 2048 built with SDL2 with optional features, written as an assignment fo
 Go to [releases](https://github.com/teppyboy/2048/releases/latest) and download the latest version available for your platform,
 if somehow a platform is not available then you can build from source using the tutorial below.
 
+To move the tiles use the WASD key or toggle arrow key support in the game settings.
+
 ## Building
 To build this game, you must have Meson, Ninja, CMake, make, g++/clang++, SDL2, SDL2_mixer, SDL2_ttf, SDL2_image along with required headers installed.
 

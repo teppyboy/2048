@@ -43,6 +43,10 @@ class SettingsScreen : public Screen
     SDL_Rect sfx_toggle_rect;
     SDL_Texture *sfx_toggle_text_texture;
     SDL_Rect sfx_toggle_text_rect;
+    RectangleCheckbox *arrow_keys_toggle;
+    SDL_Rect arrow_keys_toggle_rect;
+    SDL_Texture *arrow_keys_toggle_text_texture;
+    SDL_Rect arrow_keys_toggle_text_rect;
     // Settings section
     bool settings_changed;
     SDL_Texture *screen_as_texture;
@@ -114,6 +118,27 @@ class SettingsScreen : public Screen
         sfx_toggle = new RectangleCheckbox(renderer, window, sfx_toggle_rect.x + sfx_toggle_rect.w - 10 - 40, sfx_toggle_rect.y + 10, 40, 40, [&](bool checked)
         { toggle_sfx(checked); });
         sfx_toggle->set_checked(settings.sfx_volume > 0);
+        i++;
+        arrow_keys_toggle_rect = {
+            settings_bg_rect.x + 10,
+            settings_bg_rect.y + 50 + 70 * i,
+            settings_bg_rect.w - 20,
+            60,
+        };
+        auto arrow_keys_toggle_c_str = "Use Arrow Keys to move tiles";
+        SDL_Surface *arrow_keys_toggle_surface = TTF_RenderUTF8_Blended(UI_FONT_24, arrow_keys_toggle_c_str, TILE_TEXT_LIGHT_RGB);
+        arrow_keys_toggle_text_texture = SDL_CreateTextureFromSurface(renderer, arrow_keys_toggle_surface);
+        TTF_SizeUTF8(UI_FONT_24, arrow_keys_toggle_c_str, &arrow_keys_toggle_surface->w, &arrow_keys_toggle_surface->h);
+        arrow_keys_toggle_text_rect = {
+            arrow_keys_toggle_rect.x + 10,
+            arrow_keys_toggle_rect.y + 60 / 2 - arrow_keys_toggle_surface->h / 2,
+            arrow_keys_toggle_surface->w,
+            arrow_keys_toggle_surface->h,
+        };
+        SDL_FreeSurface(arrow_keys_toggle_surface);
+        arrow_keys_toggle = new RectangleCheckbox(renderer, window, arrow_keys_toggle_rect.x + arrow_keys_toggle_rect.w - 10 - 40, arrow_keys_toggle_rect.y + 10, 40, 40, [&](bool checked)
+        { toggle_arrow_keys(checked); });
+        arrow_keys_toggle->set_checked(settings.music_volume > 0);
     }
 
 public:
@@ -178,6 +203,13 @@ public:
         set_sfx_volume(settings.sfx_volume);
         settings_changed = true;
     }
+    void toggle_arrow_keys(bool checked)
+    {
+        SDL_LogVerbose(0, "Arrow keys toggle clicked.");
+        settings.use_arrow_keys = checked;
+        settings.save();
+        settings_changed = true;
+    }
     void toggle_fps(bool checked)
     {
         SDL_LogVerbose(0, "FPS toggle clicked.");
@@ -196,6 +228,7 @@ public:
         fps_toggle->handle_event(event);
         bgm_toggle->handle_event(event);
         sfx_toggle->handle_event(event);
+        arrow_keys_toggle->handle_event(event);
         if (event.type == SDL_KEYDOWN)
         {
             switch (event.key.keysym.sym)
@@ -229,6 +262,8 @@ public:
         SDL_RenderCopy(renderer, bgm_toggle_text_texture, NULL, &bgm_toggle_text_rect);
         SDL_RenderFillRect(renderer, &sfx_toggle_rect);
         SDL_RenderCopy(renderer, sfx_toggle_text_texture, NULL, &sfx_toggle_text_rect);
+        SDL_RenderFillRect(renderer, &arrow_keys_toggle_rect);
+        SDL_RenderCopy(renderer, arrow_keys_toggle_text_texture, NULL, &arrow_keys_toggle_text_rect);
         // Cleanup
         SDL_SetRenderTarget(renderer, NULL);
         settings_changed = false;
@@ -241,6 +276,7 @@ public:
         fps_toggle->render();
         bgm_toggle->render();
         sfx_toggle->render();
+        arrow_keys_toggle->render();
     }
     ~SettingsScreen()
     {
