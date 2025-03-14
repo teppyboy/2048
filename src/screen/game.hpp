@@ -261,7 +261,8 @@ public:
         else
         {
             free_needed = true;
-            text_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(value).c_str(), TILE_TEXT_DARK_RGB);
+            std::string text = std::to_string(value);
+            text_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, text.c_str(), TILE_TEXT_DARK_RGB);
             text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
             tile_texture = TILE_BIG_TEXTURE;
             TILE_TEXT_SURFACES.push_back(text_surface);
@@ -422,9 +423,11 @@ public:
         // The "BEST" text
         SDL_RenderCopy(renderer, best_score_text_texture, NULL, &best_score_text_rect);
         // The score
-        SDL_Surface *score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(board.score).c_str(), TILE_TEXT_DARK_RGB);
+        auto board_score_str = std::to_string(board.score);
+        auto best_score_str = std::to_string(user_data.best_score);
+        SDL_Surface *score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, board_score_str.c_str(), TILE_TEXT_DARK_RGB);
         SDL_Texture *score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
-        TTF_SizeUTF8(UI_FONT_BOLD_32, std::to_string(board.score).c_str(), &score_surface->w, &score_surface->h);
+        TTF_SizeUTF8(UI_FONT_BOLD_32, board_score_str.c_str(), &score_surface->w, &score_surface->h);
         SDL_Rect score_text_rect = {
             score_rect.x + score_rect.w / 2 - score_surface->w / 2,
             score_rect.y + 36,
@@ -436,9 +439,9 @@ public:
             user_data.best_score = board.score;
         }
         // The best score
-        SDL_Surface *best_score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, std::to_string(user_data.best_score).c_str(), TILE_TEXT_DARK_RGB);
+        SDL_Surface *best_score_surface = TTF_RenderUTF8_Blended(UI_FONT_BOLD_32, best_score_str.c_str(), TILE_TEXT_DARK_RGB);
         SDL_Texture *best_score_texture = SDL_CreateTextureFromSurface(renderer, best_score_surface);
-        TTF_SizeUTF8(UI_FONT_BOLD_32, std::to_string(user_data.best_score).c_str(), &best_score_surface->w, &best_score_surface->h);
+        TTF_SizeUTF8(UI_FONT_BOLD_32, best_score_str.c_str(), &best_score_surface->w, &best_score_surface->h);
         SDL_Rect best_score_text_rect = {
             best_score_rect.x + best_score_rect.w / 2 - best_score_surface->w / 2,
             best_score_rect.y + 36,
