@@ -12,6 +12,8 @@ This is 2048 built with SDL2 with optional features, written as an assignment fo
 Go to [releases](https://github.com/teppyboy/2048/releases/latest) and download the latest version available for your platform,
 if somehow a platform is not available then you can build from source using the tutorial below.
 
+To launch the game on Windows run `2048.exe`, for Linux (and possibly macOS) run `start.sh`
+
 To move the tiles use the WASD key or toggle arrow key support in the game settings.
 
 ## Building

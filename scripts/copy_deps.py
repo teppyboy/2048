@@ -2,6 +2,7 @@
 import os
 import platform
 import shutil
+import subprocess
 from pathlib import Path
 
 # Kind of hardcoded here but okay.
@@ -34,7 +35,10 @@ if platform.system() == "Windows":
         if full_dll_path.exists():
             print(f"Copying {full_dll_path} to {install_path / first_str}")
             shutil.copy(full_dll_path, install_path / first_str)
-
+else:
+    print("Copying game start script...")
+    shutil.copy("../scripts/start.sh", "../bin/start.sh")
+    subprocess.call("chmod +x ../bin/start.sh", shell=True)
 
 # Copy assets
 print(f"Copying assets to {install_path / 'assets'}")
