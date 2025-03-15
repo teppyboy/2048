@@ -15,11 +15,11 @@ for dll in build_path.glob("**/*.dll"):
     shutil.copy(dll, install_path / dll.name)
 # Untested but okay.
 for so in build_path.glob("**/*.so"):
-    print(f"Copying {so} to {install_path / 'lib' / so.name}")
-    shutil.copy(so, install_path / 'lib' / so.name)
+    print(f"Copying {so} to {install_path / so.name}")
+    shutil.copy(so, install_path / so.name)
 for dylib in build_path.glob("**/*.dylib"):
-    print(f"Copying {dylib} to {install_path / 'lib' / dylib.name}")
-    shutil.copy(dylib, install_path / 'lib' / dylib.name)
+    print(f"Copying {dylib} to {install_path / dylib.name}")
+    shutil.copy(dylib, install_path / dylib.name)
 
 if platform.system() == "Windows":
     # Fuck Windows.
