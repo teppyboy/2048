@@ -17,7 +17,7 @@ To launch the game on Windows run `2048.exe`, for Linux (and possibly macOS) run
 To move the tiles use the WASD key or toggle arrow key support in the game settings.
 
 ## Building
-To build this game, you must have Meson, Ninja, CMake, make, g++/clang++ along with required headers installed, both MSYS2 (MinGW) and MSVC are supported. 
+To build this game, you must have Meson, Ninja, CMake, freetype2, make, g++/clang++ along with required headers installed, both MSYS2 (MinGW) and MSVC are supported. 
 
 ```bash
 git clone https://github.com/teppyboy/2048
