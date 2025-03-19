@@ -12,11 +12,27 @@ public:
     bool use_arrow_keys;
     static Settings default_settings()
     {
-        return Settings{DEFAULT_WIDTH, DEFAULT_HEIGHT, false, 100, 70, true};
+        Settings settings;
+        settings.width = DEFAULT_WIDTH;
+        settings.height = DEFAULT_HEIGHT;
+        settings.fps_hud = false;
+        settings.sfx_volume = 100;
+        settings.music_volume = 70;
+        settings.use_arrow_keys = true;
+        return settings;
+        // return Settings{DEFAULT_WIDTH, DEFAULT_HEIGHT, false, 100, 70, true};
     }
     static Settings from_json(const nlohmann::json &j)
     {
-        return Settings{j.at("width").get<int>(), j.at("height").get<int>(), j.at("fps_hud").get<bool>(), j.at("sfx_volume").get<int>(), j.at("music_volume").get<int>(), j.at("use_arrow_keys").get<bool>()};
+        Settings settings;
+        j.at("width").get_to(settings.width);
+        j.at("height").get_to(settings.height);
+        j.at("fps_hud").get_to(settings.fps_hud);
+        j.at("sfx_volume").get_to(settings.sfx_volume);
+        j.at("music_volume").get_to(settings.music_volume);
+        j.at("use_arrow_keys").get_to(settings.use_arrow_keys);
+        return settings;
+        // return Settings{j.at("width").get<int>(), j.at("height").get<int>(), j.at("fps_hud").get<bool>(), j.at("sfx_volume").get<int>(), j.at("music_volume").get<int>(), j.at("use_arrow_keys").get<bool>()};
     }
     static Settings load()
     {
@@ -70,10 +86,10 @@ public:
     static UserData default_user_data()
     {
         auto empty = std::vector<Save>();
-        return UserData{
-            best_score : 0,
-            saves : empty
-        };
+        UserData user_data;
+        user_data.best_score = 0;
+        user_data.saves = empty;
+        return user_data;
     }
     static UserData from_json(const nlohmann::json &j)
     {

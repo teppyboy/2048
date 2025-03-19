@@ -17,7 +17,7 @@ To launch the game on Windows run `2048.exe`, for Linux (and possibly macOS) run
 To move the tiles use the WASD key or toggle arrow key support in the game settings.
 
 ## Building
-To build this game, you must have Meson, Ninja, CMake, make, g++/clang++, SDL2, SDL2_mixer, SDL2_ttf, SDL2_image along with required headers installed.
+To build this game, you must have Meson, Ninja, CMake, make, g++/clang++ along with required headers installed, both MSYS2 (MinGW) and MSVC are supported. 
 
 ```bash
 git clone https://github.com/teppyboy/2048
@@ -25,16 +25,17 @@ cd 2048
 meson setup builddir  # Needed for installing SDL2 libraries to the project.
 ```
 
+> By default it'll build and copy files for MSYS2 environment, to build for MSVC append `msvc` to the build directory name (e.g. `builddir-msvc`)
+
 + Debug
 ```bash
-meson compile -C ./builddir
 meson install -C ./builddir
 ```
 
 + Release
 ```bash
+# DO NOT USE --strip WHEN BUILDING WITH MSVC, IT DOESN'T WORK.
 meson setup builddir-release --buildtype release --optimization 3 --strip
-meson compile -C ./builddir-release
 meson install -C ./builddir-release
 ```
 

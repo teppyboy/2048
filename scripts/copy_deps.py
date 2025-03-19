@@ -24,17 +24,19 @@ for dylib in build_path.glob("**/*.dylib"):
 
 if platform.system() == "Windows":
     # Fuck Windows.
-    for dll_line in Path("../scripts/dlls_list.txt").read_text().splitlines():
-        try:
-            first_str = dll_line.strip().split()[0]
-        except IndexError:
-            continue
-        if Path(first_str).suffix != ".dll":
-            continue
-        full_dll_path = Path(msys2_path) / first_str
-        if full_dll_path.exists():
-            print(f"Copying {full_dll_path} to {install_path / first_str}")
-            shutil.copy(full_dll_path, install_path / first_str)
+    if "msvc" not in str(build_path):
+        print("Begin copying MSYS2 dependencies...")
+        for dll_line in Path("../scripts/dlls_list.txt").read_text().splitlines():
+            try:
+                first_str = dll_line.strip().split()[0]
+            except IndexError:
+                continue
+            if Path(first_str).suffix != ".dll":
+                continue
+            full_dll_path = Path(msys2_path) / first_str
+            if full_dll_path.exists():
+                print(f"Copying {full_dll_path} to {install_path / first_str}")
+                shutil.copy(full_dll_path, install_path / first_str)
 else:
     print("Copying game start script...")
     shutil.copy("../scripts/start.sh", "../bin/start.sh")
