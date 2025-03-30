@@ -56,6 +56,9 @@ The output will be in `./bin`
 + Game background: https://www.pixiv.net/en/artworks/127189078
 + Saves background: https://www.pixiv.net/en/artworks/124283216
 + Settings background: https://www.pixiv.net/en/artworks/123982957
+### Libraries
++ SDL2 (without it this project wouldn't have existed)
++ [nlohmann/json](https://github.com/nlohmann/json): For serialize and deserialize JSON settings.
 ### Assistance
 + StackOverflow
 + Perplexity (with Claude 3.7 Sonnet)
